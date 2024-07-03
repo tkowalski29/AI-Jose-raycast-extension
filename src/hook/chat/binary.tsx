@@ -3,13 +3,9 @@ import { GetApiBinnaryPath } from "../../type/config";
 import { TalkQuestionFileType, TalkType } from "../../type/talk";
 
 export async function RunBinnary(
+  chat: TalkType,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  toast: any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setLoading: any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setData: any,
-  chat: TalkType
+  interaction: { toast: Toast; setData: any; setStreamData: any; setLoading: any }
 ): Promise<TalkType | undefined> {
   // eslint-disable-next-line
   const util = require("util");
@@ -33,11 +29,11 @@ export async function RunBinnary(
     if (stderr !== "") {
       console.log(stderr);
 
-      toast.title = "Error";
-      toast.message = String(stderr);
-      toast.style = Toast.Style.Failure;
+      interaction.toast.title = "Error";
+      interaction.toast.message = String(stderr);
+      interaction.toast.style = Toast.Style.Failure;
 
-      setLoading(false);
+      interaction.setLoading(false);
 
       return undefined;
     }
@@ -46,12 +42,12 @@ export async function RunBinnary(
     chat = { ...chat, result: out.result ?? undefined };
 
     if (typeof chat.result?.text === "string") {
-      setLoading(false);
+      interaction.setLoading(false);
 
-      toast.title = "Got your answer!";
-      toast.style = Toast.Style.Success;
+      interaction.toast.title = "Got your answer!";
+      interaction.toast.style = Toast.Style.Success;
 
-      setData((prev: TalkType[]) => {
+      interaction.setData((prev: TalkType[]) => {
         return prev.map((a: TalkType) => {
           if (a.chatId === chat.chatId) {
             return chat;
@@ -65,11 +61,11 @@ export async function RunBinnary(
   } catch (error) {
     console.log(error);
 
-    toast.title = "Error";
-    toast.message = String(error);
-    toast.style = Toast.Style.Failure;
+    interaction.toast.title = "Error";
+    interaction.toast.message = String(error);
+    interaction.toast.style = Toast.Style.Failure;
 
-    setLoading(false);
+    interaction.setLoading(false);
 
     return undefined;
   }

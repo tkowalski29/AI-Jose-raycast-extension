@@ -64,11 +64,11 @@ export function useChat(): ChatHookType {
         break;
       case ConfigurationTypeCommunicationExternalApi:
         console.log("Using custom API endpoint");
-        chatResponse = await RunCustomApi(toast, setLoading, setData, chat);
+        chatResponse = await RunCustomApi(chat, { toast, setData, setStreamData, setLoading });
         break;
       case ConfigurationTypeCommunicationBinaryFile:
         console.log("Using local binnary file");
-        chatResponse = await RunBinnary(toast, setLoading, setData, chat);
+        chatResponse = await RunBinnary(chat, { toast, setData, setStreamData, setLoading });
         break;
       default:
         console.log("Using default");
