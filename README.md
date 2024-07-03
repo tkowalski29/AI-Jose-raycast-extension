@@ -75,7 +75,6 @@ All preferences properties list that can be customize through `Raycast Settings 
 | `apiEndpoint`                | API Endpoint                   | `string`    | `false`  | `empty`    | API endpoint for communication answer                                                                |
 | `apiBinnary`                 | Path to binnary script         | `file`      | `false`  | `empty`    | Binnary endpoint for communication                                                                   |
 | `apiEndpointData`            | API Endpoint Data              | `string`    | `false`  | `empty`    | API endpoint for download assistants and snippets                                                    |
-| `clearHistoryWhenUseSnippet` | Clear history when use snippet | `boolean`   | `false`  | `false`    | When user choose snippet, history is cleaning. Is working only on local communication                |
 
 ---
 
