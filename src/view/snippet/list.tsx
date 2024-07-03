@@ -30,6 +30,7 @@ export const SnippetListView = ({
 };
 
 export function SnippetGroupByCategory(array: TalkSnippetType[]) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return array.reduce((acc: any, obj: TalkSnippetType) => {
     const key = obj.category;
     if (!acc[key]) {

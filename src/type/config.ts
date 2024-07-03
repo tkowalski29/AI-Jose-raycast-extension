@@ -162,6 +162,7 @@ export function IsClearHistoryWhenUseSnippet(): boolean {
 }
 
 export function GetUserName(): string {
+  // eslint-disable-next-line
   const match = environment.assetsPath.match(/\/Users\/([^\/]+)/);
   return match ? match[1] : "unknown";
 }

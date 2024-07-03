@@ -10,10 +10,15 @@ import { ReplacePlaceholders } from "../../common/prompt";
 import { ConversationSelectedTypeSnippet } from "../../type/conversation";
 
 export async function RunOpenAiApi(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   toast: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setLoading: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setData: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setStreamData: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any,
   chat: TalkType
 ): Promise<TalkType | undefined> {
@@ -57,9 +62,11 @@ export async function RunOpenAiApi(
         params: {},
       }
     )
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .then(async (res: any) => {
       if (useStream) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (res.data as any).on("data", (data: CreateChatCompletionDeltaResponseType) => {
             const lines = data
               .toString()
@@ -72,9 +79,12 @@ export async function RunOpenAiApi(
               try {
                 message = line.replace(/^data: /, "");
                 response = JSON.parse(message);
-              } catch (error) {}
+              } catch (error) {
+                console.log(error);
+              }
 
               if (message === "[DONE]" || response?.choices[0].finish_reason === "stop") {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 setData((prev: any) => {
                   return prev.map((a: TalkType) => {
                     if (a.chatId === chat.chatId) {
@@ -142,6 +152,7 @@ export async function RunOpenAiApi(
             actionStatus: "",
           };
         }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         chat.result.text = res.data.choices.map((x: any) => x.message)[0]?.content ?? "";
         chat = { ...chat, result: chat.result };
 
@@ -164,6 +175,7 @@ export async function RunOpenAiApi(
         return chat;
       }
     })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .catch((error: any) => {
       if (error?.message) {
         if (error.message.includes("429")) {

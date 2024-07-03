@@ -3,13 +3,19 @@ import { GetApiBinnaryPath } from "../../type/config";
 import { TalkQuestionFileType, TalkType } from "../../type/talk";
 
 export async function RunBinnary(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   toast: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setLoading: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setData: any,
   chat: TalkType
 ): Promise<TalkType | undefined> {
+  // eslint-disable-next-line
   const util = require("util");
+  // eslint-disable-next-line
   const fs = require("fs");
+  // eslint-disable-next-line
   const exec = util.promisify(require("child_process").exec);
   const newChat: TalkType = JSON.parse(JSON.stringify(chat));
 

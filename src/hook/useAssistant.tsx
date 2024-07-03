@@ -116,6 +116,7 @@ export function useAssistant(): AssistantHookType {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function apiLoad(setData: any, oldData: TalkAssistantType[]) {
   await fetch(GetApiEndpointData(), {
     method: "POST",
@@ -129,7 +130,9 @@ async function apiLoad(setData: any, oldData: TalkAssistantType[]) {
     }),
   })
     .then(async (response) => response.json())
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .then(async (res: any) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const newRes: TalkAssistantType[] = res.map((item: any) => {
         const existing = oldData.find((x: TalkAssistantType) => x.assistantId === item.assistantId);
         return {

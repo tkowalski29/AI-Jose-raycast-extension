@@ -44,7 +44,7 @@ export function useChat(): ChatHookType {
     const chat: TalkType = GetNewChat(chatQuestion, conversation, conversation.assistant, conversation.snippet);
     chat.conversationType = conversation.selectedType;
 
-    setData((prev: TalkType[]) => {
+    setData(() => {
       return [...conversation.chats, chat];
     });
 
@@ -103,10 +103,12 @@ export function useChat(): ChatHookType {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function sendWebhook(chat: TalkType, setData: any) {
   const webhook =
     chat.conversationType === ConversationSelectedTypeSnippet ? chat.snippet?.webhookUrl : chat.assistant.webhookUrl;
   const newChat: TalkType = JSON.parse(JSON.stringify(chat));
+  // eslint-disable-next-line
   // @ts-ignore
   newChat.assistant = { assistantId: newChat.assistant.assistantId };
 
@@ -121,10 +123,12 @@ async function sendWebhook(chat: TalkType, setData: any) {
     },
     body: JSON.stringify(chat),
   })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .then(async (res: any) => {
       const data = await res.json();
       Object.assign(chat, data);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setData((prev: any) => {
         return prev.map((a: TalkType) => {
           if (a.chatId === chat.chatId) {

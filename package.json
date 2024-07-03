@@ -5,10 +5,10 @@
   "description": "Private chat interaction",
   "icon": "icon.png",
   "author": "tkowalski29",
-  "owner": "i...",
   "categories": [
     "Productivity"
   ],
+  "license": "MIT",
   "commands": [
     {
       "name": "assistant",
@@ -86,6 +86,7 @@
       "default": false
     }
   ],
+  "tools": [],
   "dependencies": {
     "@langchain/community": "^0.2.9",
     "@langchain/openai": "^0.1.2",
@@ -94,7 +95,7 @@
     "@types/react": "^18.3.3",
     "@types/uuid": "^9.0.0",
     "node-fetch": "^3.3.2",
-    "openai": "^3.2.1",
+    "openai": "^4.52.3",
     "say": "^0.16.0",
     "uuid": "^9.0.0"
   },

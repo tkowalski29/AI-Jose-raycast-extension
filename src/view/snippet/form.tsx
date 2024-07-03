@@ -75,7 +75,7 @@ export const SnippetForm = (props: {
         placeholder="Type communication snippet"
         {...itemProps.typeCommunication}
       >
-        {Object.entries(ConfigurationTypeCommunication).map(([key, value]) => (
+        {Object.entries(ConfigurationTypeCommunication).map(([, value]) => (
           <Form.Dropdown.Item value={value.key} key={value.key} title={value.title} />
         ))}
       </Form.Dropdown>
@@ -85,7 +85,7 @@ export const SnippetForm = (props: {
       <Form.TextField title="Emoji" placeholder="Emoji your snippet" {...itemProps.emoji} />
 
       <Form.Dropdown title="Model" placeholder="Choose model" {...itemProps.model}>
-        {Object.entries(ConfigurationModelCollection).map(([key, value]) => (
+        {Object.entries(ConfigurationModelCollection).map(([, value]) => (
           <Form.Dropdown.Item value={value.key} key={value.key} title={value.title} />
         ))}
       </Form.Dropdown>

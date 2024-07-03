@@ -4,7 +4,7 @@ import { ConversationSelectedTypeAssistant, ConversationType, ConversationsHookT
 import { PromiseFunctionNoArgType } from "./hook";
 import { SetType } from "./base";
 import { GetDevice, GetUserName } from "./config";
-import { TalkAssistantType, TalkSnippetType, TalkType, TalkQuestionFileType, TalkQuestionType } from "./talk";
+import { TalkAssistantType, TalkSnippetType, TalkType, TalkQuestionType } from "./talk";
 
 export function GetNewChat(
   question: TalkQuestionType,

@@ -6,9 +6,12 @@ import { TalkType } from "../type/talk";
 
 export const Call = async (
   chat: TalkType,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   messages: any[],
   config: { stream: boolean; temperature: string; model: string },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   interaction: { toast: Toast; setData: any; setStreamData: any; setLoading: any }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> => {
   const modelSettings = {
     apiKey: GetApiOpenAiKey(),
@@ -17,8 +20,10 @@ export const Call = async (
     temperature: parseFloat(config.temperature),
     callbacks: [
       {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         handleLLMNewToken: async (token: string, idx: any, runId: any, parentRunId: any, tags: any, fields: any) => {
           if (fields.chunk.generationInfo.finish_reason === "stop") {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             interaction.setData((prev: any) => {
               return prev.map((a: TalkType) => {
                 if (a.chatId === chat.chatId) {
@@ -53,6 +58,7 @@ export const Call = async (
 
           interaction.setStreamData({ ...chat, result: chat.result });
         },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         handleLLMEnd: async (output: any) => {
           if (chat.result === undefined) {
             chat.result = {
@@ -66,6 +72,7 @@ export const Call = async (
           }
           chat.result.text = output.generations[0][0].text;
 
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           interaction.setData((prev: any) => {
             return prev.map((a: TalkType) => {
               if (a.chatId === chat.chatId) {

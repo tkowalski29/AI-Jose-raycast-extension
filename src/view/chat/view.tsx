@@ -13,9 +13,7 @@ export const ChatView = ({
   conversation,
   setConversation,
   use,
-  assistants,
   selectedAssistant,
-  onAssistantChange,
 }: ChatViewPropsType) => {
   const { push } = useNavigation();
   const sortedChats = data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());

@@ -4,11 +4,15 @@ import { GetApiEnpointUrl } from "../../type/config";
 import { TalkQuestionFileType, TalkType } from "../../type/talk";
 
 export async function RunCustomApi(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   toast: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setLoading: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setData: any,
   chat: TalkType
 ): Promise<TalkType | undefined> {
+  // eslint-disable-next-line
   const fs = require("fs");
   const newChat: TalkType = JSON.parse(JSON.stringify(chat));
 
@@ -27,6 +31,7 @@ export async function RunCustomApi(
     body: JSON.stringify(Object.assign({ dataType: "talk" }, newChat)),
   })
     .then(async (response) => response.json())
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .then(async (res: any) => {
       if (chat.result === undefined) {
         chat.result = {
@@ -46,6 +51,7 @@ export async function RunCustomApi(
         toast.title = "Got your answer!";
         toast.style = Toast.Style.Success;
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setData((prev: any) => {
           return prev.map((a: TalkType) => {
             if (a.chatId === chat.chatId) {

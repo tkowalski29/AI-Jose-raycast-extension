@@ -79,7 +79,7 @@ export const AssistantForm = (props: {
           placeholder="Type communication assistant"
           {...itemProps.typeCommunication}
         >
-          {Object.entries(ConfigurationTypeCommunication).map(([key, value]) => (
+          {Object.entries(ConfigurationTypeCommunication).map(([, value]) => (
             <Form.Dropdown.Item value={value.key} key={value.key} title={value.title} />
           ))}
         </Form.Dropdown>
@@ -95,7 +95,7 @@ export const AssistantForm = (props: {
         <Form.TextField title="Emoji" placeholder="Emoji your assistant" {...itemProps.emoji} />
 
         <Form.Dropdown title="Model" placeholder="Choose model" {...itemProps.model}>
-          {Object.entries(ConfigurationModelCollection).map(([key, value]) => (
+          {Object.entries(ConfigurationModelCollection).map(([, value]) => (
             <Form.Dropdown.Item value={value.key} key={value.key} title={value.title} />
           ))}
         </Form.Dropdown>

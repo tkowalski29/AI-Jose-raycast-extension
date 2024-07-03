@@ -174,12 +174,10 @@ export default function Chat(props: { conversation?: ConversationType; arguments
       <ChatView
         data={conversation.chats}
         question={question.data}
+        conversation={conversation}
         setConversation={setConversation}
         use={{ chats, conversations }}
-        conversation={conversation}
-        assistants={assistants.data}
         selectedAssistant={selectedAssistant}
-        onAssistantChange={setSelectedAssistant}
       />
     </List>
   );

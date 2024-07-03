@@ -25,6 +25,7 @@ export default function Conversation() {
   }, [conversation]);
 
   const uniqueConversations = conversations.data.filter(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (value: any, index: any, self: any) =>
       index === self.findIndex((conversation: ConversationType) => conversation.conversationId === value.conversationId)
   );

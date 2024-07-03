@@ -11,6 +11,7 @@ import { ConversationSelectedTypeSnippet } from "../../type/conversation";
 export async function RunLangChain(
   chat: TalkType,
   conversations: TalkType[],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   interaction: { toast: Toast; setData: any; setStreamData: any; setLoading: any }
 ): Promise<TalkType | undefined> {
   const useStream = true;

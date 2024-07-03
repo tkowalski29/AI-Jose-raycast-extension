@@ -15,8 +15,9 @@ export const SnippetImportForm = (props: { use: { snippets: SnippetHookType } })
   const { use } = props;
   const { pop } = useNavigation();
 
-  const { handleSubmit, itemProps } = useForm<{ json: string }>({
+  const { handleSubmit } = useForm<{ json: string }>({
     onSubmit: async (data: { json: string }) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       JSON.parse(data.json).map((item: any) => {
         let iModel = ClearImportModel(item.model);
         if (!ConfigurationModelCollection.some((model) => model.key === iModel)) {

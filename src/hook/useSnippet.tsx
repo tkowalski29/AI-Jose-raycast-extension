@@ -116,6 +116,7 @@ export function useSnippet(): SnippetHookType {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function apiLoad(setData: any, oldData: TalkSnippetType[]) {
   await fetch(GetApiEndpointData(), {
     method: "POST",
@@ -129,7 +130,9 @@ async function apiLoad(setData: any, oldData: TalkSnippetType[]) {
     }),
   })
     .then(async (response) => response.json())
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .then(async (res: any) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const newRes: TalkSnippetType[] = res.map((item: any) => {
         const existing = oldData.find((x: TalkSnippetType) => x.snippetId === item.snippetId);
         return {
