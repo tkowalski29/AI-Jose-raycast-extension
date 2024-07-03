@@ -2,14 +2,20 @@ import { LocalStorage, showToast, Toast } from "@raycast/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import fetch from "node-fetch";
 import { SnippetDefaultTemperature, SnippetHookType } from "../type/snippet";
-import { ClearPromptSystem, ConfigurationTypeCommunicationDefault, GetApiEndpointData, GetDevice, GetUserName } from "../type/config";
+import {
+  ClearPromptSystem,
+  ConfigurationTypeCommunicationDefault,
+  GetApiEndpointData,
+  GetDevice,
+  GetUserName,
+} from "../type/config";
 import { TalkSnippetType } from "../type/talk";
 
 export function useSnippet(): SnippetHookType {
   const [data, setData] = useState<TalkSnippetType[]>([]);
   const [isLoading, setLoading] = useState<boolean>(true);
 
-  const localStorageName = "snippets"
+  const localStorageName = "snippets";
 
   useEffect(() => {
     (async () => {
@@ -18,9 +24,9 @@ export function useSnippet(): SnippetHookType {
         setData((previous) => [...previous, ...JSON.parse(stored)]);
       } else {
         if (GetApiEndpointData() !== "") {
-          await apiLoad(setData, data)
+          await apiLoad(setData, data);
         } else {
-            setData([]);
+          setData([]);
         }
       }
 
@@ -33,7 +39,7 @@ export function useSnippet(): SnippetHookType {
   }, [data]);
 
   const reload = useCallback(async () => {
-    await apiLoad(setData, data)
+    await apiLoad(setData, data);
 
     await showToast({
       title: "Assistant data realoaded!",
@@ -41,52 +47,61 @@ export function useSnippet(): SnippetHookType {
     });
   }, [setData, data]);
 
-  const add = useCallback(async (item: TalkSnippetType) => {
-    item.isLocal = true
-    const newData: TalkSnippetType = { ...item };
-    setData([...data, newData]);
+  const add = useCallback(
+    async (item: TalkSnippetType) => {
+      item.isLocal = true;
+      const newData: TalkSnippetType = { ...item };
+      setData([...data, newData]);
 
-    await showToast({
-      title: "Snippet saved!",
-      style: Toast.Style.Success,
-    });
-  }, [setData, data]);
-
-  const update = useCallback(async (item: TalkSnippetType) => {
-    setData((prev) => {
-      return prev.map((v: TalkSnippetType) => {
-        if (v.snippetId === item.snippetId) {
-          return item;
-        }
-
-        return v;
-      });
-    });
-
-    await showToast({
-      title: "Snippet updated!",
-      style: Toast.Style.Success,
-    });
-  }, [setData, data]);
-
-  const remove = useCallback(async (item: TalkSnippetType) => {
-    if (item.isLocal !== true) {
       await showToast({
-        title: "Removing your Snippet imposible, Snippet is not local",
-        style: Toast.Style.Failure,
+        title: "Snippet saved!",
+        style: Toast.Style.Success,
+      });
+    },
+    [setData, data]
+  );
+
+  const update = useCallback(
+    async (item: TalkSnippetType) => {
+      setData((prev) => {
+        return prev.map((v: TalkSnippetType) => {
+          if (v.snippetId === item.snippetId) {
+            return item;
+          }
+
+          return v;
+        });
       });
 
-      return;
-    }
+      await showToast({
+        title: "Snippet updated!",
+        style: Toast.Style.Success,
+      });
+    },
+    [setData, data]
+  );
 
-    const newData: TalkSnippetType[] = data.filter((o) => o.snippetId !== item.snippetId);
-    setData(newData);
+  const remove = useCallback(
+    async (item: TalkSnippetType) => {
+      if (item.isLocal !== true) {
+        await showToast({
+          title: "Removing your Snippet imposible, Snippet is not local",
+          style: Toast.Style.Failure,
+        });
 
-    await showToast({
-      title: "Snippet removed!",
-      style: Toast.Style.Success,
-    });
-  }, [setData, data]);
+        return;
+      }
+
+      const newData: TalkSnippetType[] = data.filter((o) => o.snippetId !== item.snippetId);
+      setData(newData);
+
+      await showToast({
+        title: "Snippet removed!",
+        style: Toast.Style.Success,
+      });
+    },
+    [setData, data]
+  );
 
   const clear = useCallback(async () => {
     await showToast({
@@ -101,7 +116,7 @@ export function useSnippet(): SnippetHookType {
   );
 }
 
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function apiLoad(setData: any, oldData: TalkSnippetType[]) {
   await fetch(GetApiEndpointData(), {
     method: "POST",
@@ -111,26 +126,28 @@ async function apiLoad(setData: any, oldData: TalkSnippetType[]) {
     body: JSON.stringify({
       author: GetUserName(),
       device: GetDevice(),
-      dataType: "snippets"
-    })
+      dataType: "snippets",
+    }),
   })
-  .then(async (response) => response.json())
-  .then(async (res: any) => {
-    const newRes: TalkSnippetType[] = res.map((item: any) => {
-      const existing = oldData.find((x: TalkSnippetType) => x.snippetId === item.snippetId);
-      return {
-        ...item,
-        promptSystem: ClearPromptSystem(item.promptSystem),
-        webhookUrl: existing?.webhookUrl || item.webhookUrl,
-        modelTemperature: existing?.modelTemperature || SnippetDefaultTemperature,
-        typeCommunication: existing?.typeCommunication || ConfigurationTypeCommunicationDefault,
-        isLocal: false,
-      };
-    });
+    .then(async (response) => response.json())
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .then(async (res: any) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const newRes: TalkSnippetType[] = res.map((item: any) => {
+        const existing = oldData.find((x: TalkSnippetType) => x.snippetId === item.snippetId);
+        return {
+          ...item,
+          promptSystem: ClearPromptSystem(item.promptSystem),
+          webhookUrl: existing?.webhookUrl || item.webhookUrl,
+          modelTemperature: existing?.modelTemperature || SnippetDefaultTemperature,
+          typeCommunication: existing?.typeCommunication || ConfigurationTypeCommunicationDefault,
+          isLocal: false,
+        };
+      });
 
-    setData(newRes);
-  })
-  .catch((err) => {
-    console.log(err)
-  });
+      setData(newRes);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }

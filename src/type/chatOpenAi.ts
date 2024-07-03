@@ -1,13 +1,15 @@
 import { TalkType } from "./talk";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function ChatTransfomer(chat: TalkType[], prompt: string, loadHistory: boolean): any[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const messages: any[] = [{ role: "system", content: prompt }];
 
   if (loadHistory) {
     limitConversationLength(chat).forEach(({ question, result }) => {
-      messages.push({ 
-        role: "user", 
-        content: question.text
+      messages.push({
+        role: "user",
+        content: question.text,
       });
       messages.push({
         role: "assistant",

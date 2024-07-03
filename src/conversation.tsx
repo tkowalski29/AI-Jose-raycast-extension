@@ -25,7 +25,9 @@ export default function Conversation() {
   }, [conversation]);
 
   const uniqueConversations = conversations.data.filter(
-    (value: any, index: any, self: any) => index === self.findIndex((conversation: ConversationType) => conversation.conversationId === value.conversationId)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (value: any, index: any, self: any) =>
+      index === self.findIndex((conversation: ConversationType) => conversation.conversationId === value.conversationId)
   );
 
   const filteredConversations = searchText
@@ -46,25 +48,25 @@ export default function Conversation() {
     <ActionPanel>
       <Action title="Conrinue Ask" icon={Icon.ArrowRight} onAction={() => push(<Chat conversation={conversation} />)} />
       <ActionPanel.Section title="Delete">
-      <Action
-        style={Action.Style.Destructive}
-        icon={Icon.RotateAntiClockwise}
-        title="Remove"
-        onAction={async () => {
-          await confirmAlert({
-            title: "Are you sure you want to remove this conversation?",
-            message: "This action cannot be undone",
-            icon: Icon.RotateAntiClockwise,
-            primaryAction: {
-              title: "Remove",
-              style: Alert.ActionStyle.Destructive,
-              onAction: () => {
-                conversations.remove(conversation)
+        <Action
+          style={Action.Style.Destructive}
+          icon={Icon.RotateAntiClockwise}
+          title="Remove"
+          onAction={async () => {
+            await confirmAlert({
+              title: "Are you sure you want to remove this conversation?",
+              message: "This action cannot be undone",
+              icon: Icon.RotateAntiClockwise,
+              primaryAction: {
+                title: "Remove",
+                style: Alert.ActionStyle.Destructive,
+                onAction: () => {
+                  conversations.remove(conversation);
+                },
               },
-            },
-          });
-        }}
-      />
+            });
+          }}
+        />
       </ActionPanel.Section>
     </ActionPanel>
   );

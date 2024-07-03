@@ -22,7 +22,9 @@ export const ConversationListView = (props: {
             { tag: conversation.assistant.title },
             { text: new Date(conversation.createdAt ?? 0).toLocaleDateString() },
           ]}
-          actions={conversation && selectedConversation === conversation.conversationId ? actionPanel(conversation) : undefined}
+          actions={
+            conversation && selectedConversation === conversation.conversationId ? actionPanel(conversation) : undefined
+          }
         />
       ))}
     </List.Section>

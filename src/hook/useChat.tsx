@@ -2,9 +2,16 @@ import { clearSearchBar, showToast, Toast } from "@raycast/api";
 import { useCallback, useMemo, useState } from "react";
 import { ChatHookType, GetNewChat } from "../type/chat";
 import fetch from "node-fetch";
-import { ConversationSelectedTypeAssistant, ConversationSelectedTypeSnippet, ConversationType } from "../type/conversation";
-import { ConfigurationTypeCommunicationBinaryFile, ConfigurationTypeCommunicationExternalApi, ConfigurationTypeCommunicationLangChain, ConfigurationTypeCommunicationOpenAiKey } from "../type/config";
-import { RunOpenAiApi } from "./chat/openAi";
+import {
+  ConversationSelectedTypeAssistant,
+  ConversationSelectedTypeSnippet,
+  ConversationType,
+} from "../type/conversation";
+import {
+  ConfigurationTypeCommunicationBinaryFile,
+  ConfigurationTypeCommunicationExternalApi,
+  ConfigurationTypeCommunicationLangChain,
+} from "../type/config";
 import { RunCustomApi } from "./chat/api";
 import { RunBinnary } from "./chat/binary";
 import { TalkQuestionFileType, TalkQuestionType, TalkType } from "../type/talk";
@@ -27,15 +34,15 @@ export function useChat(): ChatHookType {
       style: Toast.Style.Animated,
     });
 
-    let chatQuestion: TalkQuestionType = { text: question, files: undefined }
+    const chatQuestion: TalkQuestionType = { text: question, files: undefined };
     if (file) {
-      const f: TalkQuestionFileType = { type: "image", path: file[0], base64: undefined, url: undefined }
-      chatQuestion.files = [f]
+      const f: TalkQuestionFileType = { type: "image", path: file[0], base64: undefined, url: undefined };
+      chatQuestion.files = [f];
     }
-    let chat: TalkType = GetNewChat(chatQuestion, conversation, conversation.assistant, conversation.snippet)
-    chat.conversationType = conversation.selectedType
+    const chat: TalkType = GetNewChat(chatQuestion, conversation, conversation.assistant, conversation.snippet);
+    chat.conversationType = conversation.selectedType;
 
-    setData((prev: TalkType[]) => {
+    setData(() => {
       return [...conversation.chats, chat];
     });
 
@@ -43,48 +50,39 @@ export function useChat(): ChatHookType {
       setSelectedChatId(chat.chatId);
     }, 50);
 
-    console.log("SelectedType: " + conversation.selectedType)
-    const typeCommunication = conversation.selectedType === ConversationSelectedTypeSnippet ? conversation.snippet?.typeCommunication : conversation.assistant.typeCommunication;
-    let chatResponse: TalkType | undefined = undefined
+    console.log("SelectedType: " + conversation.selectedType);
+    const typeCommunication =
+      conversation.selectedType === ConversationSelectedTypeSnippet
+        ? conversation.snippet?.typeCommunication
+        : conversation.assistant.typeCommunication;
+    let chatResponse: TalkType | undefined = undefined;
 
     switch (typeCommunication) {
-      case ConfigurationTypeCommunicationOpenAiKey:
-        console.log("Using local API endpoint");
-        chatResponse = await RunOpenAiApi(toast, setLoading, setData, setStreamData, data, chat)
-        break;
       case ConfigurationTypeCommunicationLangChain:
-        console.log("Using local lang chain");
-        chatResponse = await RunLangChain(
-          chat, 
-          data,
-          { toast, setData, setStreamData, setLoading }
-        )
+        console.log("Using local");
+        chatResponse = await RunLangChain(chat, data, { toast, setData, setStreamData, setLoading });
         break;
       case ConfigurationTypeCommunicationExternalApi:
         console.log("Using custom API endpoint");
-        chatResponse = await RunCustomApi(toast, setLoading, setData, chat)
+        chatResponse = await RunCustomApi(toast, setLoading, setData, chat);
         break;
       case ConfigurationTypeCommunicationBinaryFile:
         console.log("Using local binnary file");
-        chatResponse = await RunBinnary(toast, setLoading, setData, chat)
+        chatResponse = await RunBinnary(toast, setLoading, setData, chat);
         break;
       default:
         console.log("Using default");
-        chatResponse = await RunLangChain(
-          chat, 
-          data,
-          { toast, setData, setStreamData, setLoading }
-        )
+        chatResponse = await RunLangChain(chat, data, { toast, setData, setStreamData, setLoading });
     }
 
     if (chatResponse !== undefined) {
-      console.log("Send webhook")
-      sendWebhook(chatResponse, setData)
+      console.log("Send webhook");
+      sendWebhook(chatResponse, setData);
     }
 
     if (chatResponse !== undefined) {
-      console.log("Reset selected")
-      conversation.selectedType = ConversationSelectedTypeAssistant
+      console.log("Reset selected");
+      conversation.selectedType = ConversationSelectedTypeAssistant;
       await conversations.update(conversation);
     }
   }
@@ -99,38 +97,43 @@ export function useChat(): ChatHookType {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function sendWebhook(chat: TalkType, setData: any) {
-  const webhook = chat.conversationType === ConversationSelectedTypeSnippet ? chat.snippet?.webhookUrl : chat.assistant.webhookUrl;
+  const webhook =
+    chat.conversationType === ConversationSelectedTypeSnippet ? chat.snippet?.webhookUrl : chat.assistant.webhookUrl;
   const newChat: TalkType = JSON.parse(JSON.stringify(chat));
+  // eslint-disable-next-line
   // @ts-ignore
-  newChat.assistant = { assistantId: newChat.assistant.assistantId }
+  newChat.assistant = { assistantId: newChat.assistant.assistantId };
 
   if (webhook === "" || webhook === null || webhook === undefined) {
-    return
-  } 
+    return;
+  }
 
   fetch(webhook, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(chat)
+    body: JSON.stringify(chat),
   })
-  .then(async (res: any) => {
-    const data = await res.json()
-    Object.assign(chat, data);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .then(async (res: any) => {
+      const data = await res.json();
+      Object.assign(chat, data);
 
-    setData((prev: any) => {
-      return prev.map((a: TalkType) => {
-        if (a.chatId === chat.chatId) {
-          return chat;
-        }
-        return a;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setData((prev: any) => {
+        return prev.map((a: TalkType) => {
+          if (a.chatId === chat.chatId) {
+            return chat;
+          }
+          return a;
+        });
       });
+    })
+    .catch((error) => {
+      console.log("Webhook error");
+      console.log(error);
     });
-  })
-  .catch((error) => {
-    console.log("Webhook error")
-    console.log(error)
-  });
 }

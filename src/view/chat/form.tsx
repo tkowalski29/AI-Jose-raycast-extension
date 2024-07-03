@@ -2,10 +2,7 @@ import { Action, ActionPanel, Form, Icon, useNavigation } from "@raycast/api";
 import { useState } from "react";
 import { ChatFullFormPropsType } from "../../type/chat";
 
-export const ChatFullForm = ({
-  initialQuestion,
-  onSubmit,
-}: ChatFullFormPropsType) => {
+export const ChatFullForm = ({ initialQuestion, onSubmit }: ChatFullFormPropsType) => {
   const { pop } = useNavigation();
 
   const [question, setQuestion] = useState<string>(initialQuestion ?? "");
@@ -46,7 +43,7 @@ export const ChatFullForm = ({
           }
         }}
       />
-      <Form.FilePicker 
+      <Form.FilePicker
         id="file"
         title="File"
         onChange={setFile}

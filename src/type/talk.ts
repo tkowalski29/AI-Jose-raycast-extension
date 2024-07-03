@@ -48,7 +48,7 @@ export interface TalkAssistantType {
 }
 
 export interface TalkSnippetType {
-  typeCommunication: string,
+  typeCommunication: string;
   snippetId: string;
   title: string;
   category: string;

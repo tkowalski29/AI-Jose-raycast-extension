@@ -12,7 +12,7 @@ export const ChatDropdown = (props: ChangeDropdownPropType) => {
       storeValue={true}
       defaultValue={"assistant__" + selectedAssistant.assistantId}
       onChange={(value: string) => {
-        const data = value.split("__")
+        const data = value.split("__");
         if (data[0] === "assistant") {
           const item = assistants.find((assistant: TalkAssistantType) => assistant.assistantId == data[1]);
           if (!item) return;
@@ -25,16 +25,35 @@ export const ChatDropdown = (props: ChangeDropdownPropType) => {
       }}
     >
       <List.Dropdown.Section title="Assistants">
-      {selectedAssistant && <List.Dropdown.Item key={selectedAssistant.assistantId} title={selectedAssistant.title} value={"assistant__" + selectedAssistant.assistantId} icon={selectedAssistant.avatar} />}
-        {assistants.filter((assistant: TalkAssistantType) => assistant.assistantId !== selectedAssistant.assistantId).map((assistant: TalkAssistantType) => (
-          <List.Dropdown.Item key={assistant.assistantId} title={assistant.title} value={"assistant__" + assistant.assistantId} icon={assistant.avatar ?? assistant.emoji} />
-        ))}
+        {selectedAssistant && (
+          <List.Dropdown.Item
+            key={selectedAssistant.assistantId}
+            title={selectedAssistant.title}
+            value={"assistant__" + selectedAssistant.assistantId}
+            icon={selectedAssistant.avatar}
+          />
+        )}
+        {assistants
+          .filter((assistant: TalkAssistantType) => assistant.assistantId !== selectedAssistant.assistantId)
+          .map((assistant: TalkAssistantType) => (
+            <List.Dropdown.Item
+              key={assistant.assistantId}
+              title={assistant.title}
+              value={"assistant__" + assistant.assistantId}
+              icon={assistant.avatar ?? assistant.emoji}
+            />
+          ))}
       </List.Dropdown.Section>
       <>
         {Object.entries(SnippetGroupByCategory(snippets) as Record<string, TalkSnippetType[]>).map(([name, list]) => (
           <List.Dropdown.Section key={name} title={name + " - Snippets"}>
             {list.map((snippet: TalkSnippetType) => (
-              <List.Dropdown.Item key={snippet.snippetId} title={snippet.title} value={"snippet__" + snippet.snippetId} icon={snippet.emoji} />
+              <List.Dropdown.Item
+                key={snippet.snippetId}
+                title={snippet.title}
+                value={"snippet__" + snippet.snippetId}
+                icon={snippet.emoji}
+              />
             ))}
           </List.Dropdown.Section>
         ))}

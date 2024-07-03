@@ -4,12 +4,12 @@ import { ConversationSelectedTypeAssistant, ConversationType, ConversationsHookT
 import { PromiseFunctionNoArgType } from "./hook";
 import { SetType } from "./base";
 import { GetDevice, GetUserName } from "./config";
-import { TalkAssistantType, TalkSnippetType, TalkType, TalkQuestionFileType, TalkQuestionType } from "./talk";
+import { TalkAssistantType, TalkSnippetType, TalkType, TalkQuestionType } from "./talk";
 
 export function GetNewChat(
   question: TalkQuestionType,
-  conversation: ConversationType, 
-  assistant: TalkAssistantType, 
+  conversation: ConversationType,
+  assistant: TalkAssistantType,
   snippet: TalkSnippetType | undefined
 ): TalkType {
   return {
@@ -24,7 +24,7 @@ export function GetNewChat(
     createdAt: new Date().toISOString(),
     streaming: false,
     result: undefined,
-  }
+  };
 }
 
 export interface ChatHookType {
@@ -39,12 +39,13 @@ export interface ChatHookType {
   streamData: TalkType | undefined;
 }
 
-export interface ChatViewPropsType extends ChangeModelPropType {
+export interface ChatViewPropsType {
   data: TalkType[];
   question: string;
   conversation: ConversationType;
   setConversation: SetType<ConversationType>;
   use: { chats: ChatHookType; conversations: ConversationsHookType };
+  selectedAssistant: TalkAssistantType;
 }
 
 export interface ChangeModelPropType {
@@ -52,7 +53,7 @@ export interface ChangeModelPropType {
   selectedAssistant: TalkAssistantType;
   onAssistantChange: SetType<TalkAssistantType>;
 }
-  
+
 export interface CreateChatCompletionDeltaResponseType {
   id: string;
   object: "chat.completion.chunk";
@@ -83,6 +84,6 @@ export interface ChangeDropdownPropType {
   assistants: TalkAssistantType[];
   snippets: TalkSnippetType[];
   selectedAssistant: TalkAssistantType;
-  onAssistantChange: SetType<TalkAssistantType>; 
+  onAssistantChange: SetType<TalkAssistantType>;
   onSnippetChange: SetType<TalkSnippetType | undefined>;
 }

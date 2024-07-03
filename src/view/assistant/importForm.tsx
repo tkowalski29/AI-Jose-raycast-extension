@@ -2,18 +2,25 @@ import { Action, ActionPanel, Form, Icon, useNavigation } from "@raycast/api";
 import { useForm, FormValidation } from "@raycast/utils";
 import { v4 as uuidv4 } from "uuid";
 import { AssistantDefaultTemperature, AssistantHookType } from "../../type/assistant";
-import { ClearImportModel, ClearImportModelTemperature, ConfigurationModelCollection, ConfigurationModelDefault, ConfigurationTypeCommunicationDefault } from "../../type/config";
+import {
+  ClearImportModel,
+  ClearImportModelTemperature,
+  ConfigurationModelCollection,
+  ConfigurationModelDefault,
+  ConfigurationTypeCommunicationDefault,
+} from "../../type/config";
 import { TalkAssistantType } from "../../type/talk";
 
 export const AssistantImportForm = (props: { use: { assistants: AssistantHookType } }) => {
   const { use } = props;
   const { pop } = useNavigation();
 
-  const { handleSubmit, itemProps } = useForm<{json: string}>({
-    onSubmit: async (data: {json: string}) => {
+  const { handleSubmit } = useForm<{ json: string }>({
+    onSubmit: async (data: { json: string }) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       JSON.parse(data.json).map((item: any) => {
         let iModel = ClearImportModel(item.model);
-        if (!ConfigurationModelCollection.some(model => model.key === iModel)) {
+        if (!ConfigurationModelCollection.some((model) => model.key === iModel)) {
           iModel = ConfigurationModelDefault;
         }
 
@@ -30,7 +37,7 @@ export const AssistantImportForm = (props: { use: { assistants: AssistantHookTyp
           additionalData: "",
           isLocal: false,
           typeCommunication: ConfigurationTypeCommunicationDefault,
-        }
+        };
 
         use.assistants.add({ ...newAssistant });
       });
@@ -40,7 +47,7 @@ export const AssistantImportForm = (props: { use: { assistants: AssistantHookTyp
       json: FormValidation.Required,
     },
   });
-  
+
   return (
     <>
       <Form
@@ -50,7 +57,12 @@ export const AssistantImportForm = (props: { use: { assistants: AssistantHookTyp
           </ActionPanel>
         }
       >
-        <Form.TextArea id="json" title="Json string" placeholder='[{"name": "...", "instructions": "..."}]' info="Json string from https://presets.ray.so/code" />
+        <Form.TextArea
+          id="json"
+          title="Json string"
+          placeholder='[{"name": "...", "instructions": "..."}]'
+          info="Json string from https://presets.ray.so/code"
+        />
       </Form>
     </>
   );
