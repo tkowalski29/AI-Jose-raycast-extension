@@ -49,6 +49,7 @@ export const Respond = (
   question: string,
   conversation: TalkType[],
   loadConverasationsHistory: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any => {
   const messages = [new AIMessage(prompt)];
 
@@ -68,6 +69,7 @@ export const Respond = (
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Plan = async (question: string, actions: any[], context: any[]): Promise<{ uuid: string }> => {
   const model = new ChatOpenAI({
     modelName: "gpt-4-1106-preview",
@@ -89,6 +91,7 @@ export const Plan = async (question: string, actions: any[], context: any[]): Pr
   return { uuid: r.content.toString() };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Rerank = async (question: string, documents: any) => {
   const model = new ChatOpenAI({
     modelName: "gpt-3.5-turbo-16k",
@@ -97,6 +100,7 @@ export const Rerank = async (question: string, documents: any) => {
   });
   console.log("Reranking documents...");
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const checks: any = [];
   for (const [document] of documents) {
     console.log("Checking document: " + document.metadata.name);
@@ -125,11 +129,13 @@ export const Rerank = async (question: string, documents: any) => {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const results = await Promise.all(checks.map((check: any) => check.rank));
   const rankings = results.map((result, index) => {
     return { uuid: checks[index].uuid, score: result.content };
   });
   console.log("Reranked documents.");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return documents.filter((document: any) =>
     rankings.find((ranking) => ranking.uuid === document[0].metadata.uuid && ranking.score === "1")
   );

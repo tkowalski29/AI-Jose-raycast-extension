@@ -12,7 +12,7 @@ import { TalkAssistantType, TalkSnippetType } from "../../type/talk";
 
 export const AssistantForm = (props: {
   assistant?: TalkAssistantType;
-  use: { assistants: AssistantHookType, snippets: TalkSnippetType[] };
+  use: { assistants: AssistantHookType; snippets: TalkSnippetType[] };
   name?: string;
 }) => {
   const { use, assistant } = props;
@@ -86,7 +86,12 @@ export const AssistantForm = (props: {
         </Form.Dropdown>
         <Form.TagPicker title="Available snippets" {...itemProps.snippet}>
           {Object.entries(use.snippets).map(([, value]) => (
-            <Form.TagPicker.Item value={value.snippetId} key={value.snippetId} title={"(" + value.category + ") " + value.title} icon={value.emoji} />
+            <Form.TagPicker.Item
+              value={value.snippetId}
+              key={value.snippetId}
+              title={"(" + value.category + ") " + value.title}
+              icon={value.emoji}
+            />
           ))}
         </Form.TagPicker>
         <Form.TextArea

@@ -18,7 +18,9 @@ export default function Assistant() {
 
   useEffect(() => {
     if (searchText != "" && searchText.length > 1) {
-      collectionsAssistants.data = collectionsAssistant.data.filter((x: TalkAssistantType) => x.title.includes(searchText));
+      collectionsAssistants.data = collectionsAssistant.data.filter((x: TalkAssistantType) =>
+        x.title.includes(searchText)
+      );
     } else {
       collectionsAssistants.data = collectionsAssistant.data;
     }
@@ -30,7 +32,14 @@ export default function Assistant() {
         title={"Create Assistant"}
         shortcut={{ modifiers: ["cmd"], key: "c" }}
         icon={Icon.Plus}
-        onAction={() => push(<AssistantForm name={searchText} use={{ assistants: collectionsAssistants, snippets: collectionsSnippet.data }} />)}
+        onAction={() =>
+          push(
+            <AssistantForm
+              name={searchText}
+              use={{ assistants: collectionsAssistants, snippets: collectionsSnippet.data }}
+            />
+          )
+        }
       />
       <Action
         title={"Import Assistant"}
@@ -47,7 +56,14 @@ export default function Assistant() {
           title={"Edit Assistant"}
           shortcut={{ modifiers: ["cmd"], key: "e" }}
           icon={Icon.Pencil}
-          onAction={() => push(<AssistantForm assistant={assistant} use={{ assistants: collectionsAssistants, snippets: collectionsSnippet.data }} />)}
+          onAction={() =>
+            push(
+              <AssistantForm
+                assistant={assistant}
+                use={{ assistants: collectionsAssistants, snippets: collectionsSnippet.data }}
+              />
+            )
+          }
         />
         <Action
           style={Action.Style.Destructive}
@@ -73,14 +89,25 @@ export default function Assistant() {
         title={"Create Assistant"}
         shortcut={{ modifiers: ["cmd"], key: "c" }}
         icon={Icon.Plus}
-        onAction={() => push(<AssistantForm name={searchText} use={{ assistants: collectionsAssistants, snippets: collectionsSnippet.data }} />)}
+        onAction={() =>
+          push(
+            <AssistantForm
+              name={searchText}
+              use={{ assistants: collectionsAssistants, snippets: collectionsSnippet.data }}
+            />
+          )
+        }
       />
       <Action
         title={"Import Assistant"}
         icon={Icon.PlusCircle}
         onAction={() => push(<AssistantImportForm use={{ assistants: collectionsAssistants }} />)}
       />
-      <Action title={"Reload Assistants from api"} icon={Icon.Download} onAction={() => collectionsAssistant.reload()} />
+      <Action
+        title={"Reload Assistants From Api"}
+        icon={Icon.Download}
+        onAction={() => collectionsAssistant.reload()}
+      />
     </ActionPanel>
   );
 

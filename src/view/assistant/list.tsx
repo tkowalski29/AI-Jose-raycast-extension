@@ -54,7 +54,11 @@ const AssistantListItem = ({
   );
 };
 
-const ModelDetailView = (props: { assistant: TalkAssistantType; snippets: TalkSnippetType[]; markdown?: string | null | undefined }) => {
+const ModelDetailView = (props: {
+  assistant: TalkAssistantType;
+  snippets: TalkSnippetType[];
+  markdown?: string | null | undefined;
+}) => {
   const { assistant, snippets, markdown } = props;
 
   return (
@@ -90,10 +94,10 @@ const ModelDetailView = (props: { assistant: TalkAssistantType; snippets: TalkSn
           <List.Item.Detail.Metadata.Separator />
           <List.Item.Detail.Metadata.Label title="Available snippets" text={assistant.snippet?.length.toString()} />
           {assistant.snippet?.map((snippetId: string) => (
-            <List.Item.Detail.Metadata.Label 
+            <List.Item.Detail.Metadata.Label
               key={snippetId}
               title=""
-              text={snippets.find((x: TalkSnippetType) => x.snippetId === snippetId)?.title} 
+              text={snippets.find((x: TalkSnippetType) => x.snippetId === snippetId)?.title}
               icon={snippets.find((x: TalkSnippetType) => x.snippetId === snippetId)?.emoji}
             />
           ))}

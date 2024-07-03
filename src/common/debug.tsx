@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function DebugInPart(data: any, chunkSize = 1000) {
   const dataString = JSON.stringify(data);
 

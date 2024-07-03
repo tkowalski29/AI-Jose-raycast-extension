@@ -5,7 +5,9 @@ import { TalkAssistantType, TalkSnippetType } from "../../type/talk";
 
 export const ChatDropdown = (props: ChangeDropdownPropType) => {
   const { assistants, snippets, selectedAssistant, onAssistantChange, onSnippetChange } = props;
-  const filtredSnippets = snippets.filter((snippet: TalkSnippetType) => (selectedAssistant.snippet ? selectedAssistant.snippet.join(", ") : "").includes(snippet.snippetId));
+  const filtredSnippets = snippets.filter((snippet: TalkSnippetType) =>
+    (selectedAssistant.snippet ? selectedAssistant.snippet.join(", ") : "").includes(snippet.snippetId)
+  );
 
   return (
     <List.Dropdown
@@ -26,18 +28,20 @@ export const ChatDropdown = (props: ChangeDropdownPropType) => {
       }}
     >
       <>
-        {Object.entries(SnippetGroupByCategory(filtredSnippets) as Record<string, TalkSnippetType[]>).map(([name, list]) => (
-          <List.Dropdown.Section key={name} title={name + " - Snippets"}>
-            {list.map((snippet: TalkSnippetType) => (
-              <List.Dropdown.Item
-                key={snippet.snippetId}
-                title={snippet.title}
-                value={"snippet__" + snippet.snippetId}
-                icon={snippet.emoji}
-              />
-            ))}
-          </List.Dropdown.Section>
-        ))}
+        {Object.entries(SnippetGroupByCategory(filtredSnippets) as Record<string, TalkSnippetType[]>).map(
+          ([name, list]) => (
+            <List.Dropdown.Section key={name} title={name + " - Snippets"}>
+              {list.map((snippet: TalkSnippetType) => (
+                <List.Dropdown.Item
+                  key={snippet.snippetId}
+                  title={snippet.title}
+                  value={"snippet__" + snippet.snippetId}
+                  icon={snippet.emoji}
+                />
+              ))}
+            </List.Dropdown.Section>
+          )
+        )}
       </>
       <List.Dropdown.Section title="Change to Assistant">
         {selectedAssistant && (

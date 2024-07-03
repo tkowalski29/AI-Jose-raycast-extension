@@ -169,7 +169,9 @@ export default function Chat(props: { conversation?: ConversationType; arguments
           chats.setSelectedChatId(id);
         }
       }}
-      searchBarPlaceholder={selectedAssistant.title + (chats.data.length > 0 ? " - Ask another question..." : " - Ask a question...")}
+      searchBarPlaceholder={
+        selectedAssistant.title + (chats.data.length > 0 ? " - Ask another question..." : " - Ask a question...")
+      }
     >
       <ChatView
         data={conversation.chats}

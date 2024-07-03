@@ -18,7 +18,7 @@ export async function RunLangChain(
   let promptString = chat.assistant.promptSystem;
   let temperature = chat.assistant.modelTemperature ? chat.assistant.modelTemperature : AssistantDefaultTemperature;
   let model = chat.assistant.model;
-  let loadHistory = true;
+  const loadHistory = true;
   if (chat.snippet?.promptSystem && chat.conversationType === ConversationSelectedTypeSnippet) {
     promptString = chat.snippet.promptSystem;
     temperature = chat.snippet.modelTemperature ? chat.snippet.modelTemperature : SnippetDefaultTemperature;

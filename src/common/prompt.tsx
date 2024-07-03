@@ -1,5 +1,6 @@
 import { BaseMessageChunk } from "@langchain/core/messages";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function ReplacePlaceholders(obj: any, prompt: string): string {
   return prompt.replace(/\{([^{}]+)\}/g, (match, p1) => {
     const value = GetNestedValue(obj, p1);
@@ -7,6 +8,7 @@ export function ReplacePlaceholders(obj: any, prompt: string): string {
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function GetNestedValue(obj: any, param: string): string | undefined {
   if (param === "question") {
     param = "question->text";
@@ -38,6 +40,7 @@ export const CurrentDate = () => {
   return `${weekday}, ${month}/${day}/${year} ${hours}:${minutes}`;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const ParseFunctionCall = (result: BaseMessageChunk): { name: string; args: any } | null => {
   if (result?.additional_kwargs?.function_call === undefined) {
     return null;
