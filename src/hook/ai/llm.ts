@@ -1,8 +1,8 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { OpenAIEmbeddings } from "@langchain/openai";
-import { GetApiOpenAiKey } from "../type/config";
 import { Toast } from "@raycast/api";
-import { TalkType } from "../type/talk";
+import { GetApiOpenAiKey } from "../../type/config";
+import { TalkType } from "../../type/talk";
 
 export const Call = async (
   chat: TalkType,
