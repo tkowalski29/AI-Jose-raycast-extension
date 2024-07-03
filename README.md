@@ -18,6 +18,9 @@ Chat with GPT straight from your computer
 
 # Still in development
 
+1. add default assistant
+2. add default snippets
+
 #### Features
 - langChain - intent
 - langChain - skill
