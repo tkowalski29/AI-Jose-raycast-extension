@@ -12,13 +12,13 @@ export default function Assistant() {
   const [searchText, setSearchText] = useState<string>("");
   const [selectedAssistantId, setSelectedAssistantId] = useState<string | null>(null);
   const { push } = useNavigation();
-  let collectionsAssistants: AssistantHookType = collections
+  const collectionsAssistants: AssistantHookType = collections;
 
   useEffect(() => {
     if (searchText != "" && searchText.length > 1) {
-      collectionsAssistants.data = collections.data.filter((x: TalkAssistantType) => x.title.includes(searchText))
+      collectionsAssistants.data = collections.data.filter((x: TalkAssistantType) => x.title.includes(searchText));
     } else {
-      collectionsAssistants.data = collections.data
+      collectionsAssistants.data = collections.data;
     }
   }, [searchText]);
 
@@ -33,15 +33,11 @@ export default function Assistant() {
       <Action
         title={"Import Assistant"}
         icon={Icon.PlusCircle}
-        onAction={() => push(<AssistantImportForm  use={{ assistants: collectionsAssistants }} />)}
+        onAction={() => push(<AssistantImportForm use={{ assistants: collectionsAssistants }} />)}
       />
-      <Action
-        title={"Reload Assistants"}
-        icon={Icon.Download}
-        onAction={() => collections.reload()}
-      />
+      <Action title={"Reload Assistants"} icon={Icon.Download} onAction={() => collections.reload()} />
     </ActionPanel>
-  )
+  );
   const getActionItem = (assistant: TalkAssistantType) => (
     <ActionPanel>
       <ActionPanel.Section title="Modify">
@@ -64,7 +60,7 @@ export default function Assistant() {
                 title: "Remove",
                 style: Alert.ActionStyle.Destructive,
                 onAction: () => {
-                  collections.remove(assistant)
+                  collections.remove(assistant);
                 },
               },
             });
@@ -80,13 +76,9 @@ export default function Assistant() {
       <Action
         title={"Import Assistant"}
         icon={Icon.PlusCircle}
-        onAction={() => push(<AssistantImportForm  use={{ assistants: collectionsAssistants }} />)}
+        onAction={() => push(<AssistantImportForm use={{ assistants: collectionsAssistants }} />)}
       />
-      <Action
-        title={"Reload Assistants"}
-        icon={Icon.Download}
-        onAction={() => collections.reload()}
-      />
+      <Action title={"Reload Assistants"} icon={Icon.Download} onAction={() => collections.reload()} />
     </ActionPanel>
   );
 
@@ -97,17 +89,17 @@ export default function Assistant() {
       filtering={false}
       throttle={false}
       selectedItemId={selectedAssistantId || undefined}
-      onSelectionChange={(id) => setSelectedAssistantId(id) }
+      onSelectionChange={(id) => setSelectedAssistantId(id)}
       searchBarPlaceholder="Search assistant..."
       searchText={searchText}
       onSearchTextChange={setSearchText}
-      actions={getActionList} 
+      actions={getActionList}
     >
       {collectionsAssistants.data.length === 0 ? (
-        <List.EmptyView 
-          title="No assistants" 
-          description="Create new assistant with ⌘ + c shortcut" 
-          icon={Icon.Stars} 
+        <List.EmptyView
+          title="No assistants"
+          description="Create new assistant with ⌘ + c shortcut"
+          icon={Icon.Stars}
         />
       ) : (
         <AssistantListView

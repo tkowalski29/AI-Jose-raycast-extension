@@ -5,9 +5,9 @@ export function ChatTransfomer(chat: TalkType[], prompt: string, loadHistory: bo
 
   if (loadHistory) {
     limitConversationLength(chat).forEach(({ question, result }) => {
-      messages.push({ 
-        role: "user", 
-        content: question.text
+      messages.push({
+        role: "user",
+        content: question.text,
       });
       messages.push({
         role: "assistant",

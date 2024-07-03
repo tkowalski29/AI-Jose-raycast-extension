@@ -39,7 +39,11 @@ export const ChatView = ({
   const getActionPanel = (selectedChat: TalkType) => (
     <ActionPanel>
       {question.length > 0 ? (
-        <Action title="Get Answer" icon={Icon.ArrowRight} onAction={() => use.chats.ask(question, undefined, conversation)} />
+        <Action
+          title="Get Answer"
+          icon={Icon.ArrowRight}
+          onAction={() => use.chats.ask(question, undefined, conversation)}
+        />
       ) : selectedChat.result?.text && use.chats.selectedChatId === selectedChat.chatId ? (
         <>
           <ActionPanel.Section title="Copy">
@@ -52,44 +56,44 @@ export const ChatView = ({
         </>
       ) : null}
       <ActionPanel.Section title="Input">
-      <Action
-        title="Full Text Input"
-        shortcut={{ modifiers: ["cmd"], key: "t" }}
-        icon={Icon.Text}
-        onAction={() => {
-          push(
-            <ChatFullForm 
-              initialQuestion={question}
-              onSubmit={(question: string, file: string[] | undefined) => use.chats.ask(question, file, conversation)}
-            />
-          );
-        }}
-      />
+        <Action
+          title="Full Text Input"
+          shortcut={{ modifiers: ["cmd"], key: "t" }}
+          icon={Icon.Text}
+          onAction={() => {
+            push(
+              <ChatFullForm
+                initialQuestion={question}
+                onSubmit={(question: string, file: string[] | undefined) => use.chats.ask(question, file, conversation)}
+              />
+            );
+          }}
+        />
       </ActionPanel.Section>
       <ActionPanel.Section title="Restart">
-      <Action
-        style={Action.Style.Destructive}
-        icon={Icon.RotateAntiClockwise}
-        title="Start New Conversation"
-        onAction={async () => {
-          await confirmAlert({
-            title: "Are you sure you want to start a new conversation?",
-            message: "This action cannot be undone",
-            icon: Icon.RotateAntiClockwise,
-            primaryAction: {
-              title: "Start New",
-              style: Alert.ActionStyle.Destructive,
-              onAction: () => {
-                setConversation(GetNewConversation(selectedAssistant, true));
-                use.chats.clear();
-                clearSearchBar();
-                use.chats.setLoading(false);
+        <Action
+          style={Action.Style.Destructive}
+          icon={Icon.RotateAntiClockwise}
+          title="Start New Conversation"
+          onAction={async () => {
+            await confirmAlert({
+              title: "Are you sure you want to start a new conversation?",
+              message: "This action cannot be undone",
+              icon: Icon.RotateAntiClockwise,
+              primaryAction: {
+                title: "Start New",
+                style: Alert.ActionStyle.Destructive,
+                onAction: () => {
+                  setConversation(GetNewConversation(selectedAssistant, true));
+                  use.chats.clear();
+                  clearSearchBar();
+                  use.chats.setLoading(false);
+                },
               },
-            },
-          });
-        }}
-        shortcut={{ modifiers: ["cmd", "shift"], key: "n" }}
-      />
+            });
+          }}
+          shortcut={{ modifiers: ["cmd", "shift"], key: "n" }}
+        />
       </ActionPanel.Section>
     </ActionPanel>
   );

@@ -3,7 +3,12 @@ import { useEffect, useState } from "react";
 import { useChat } from "./hook/useChat";
 import { useConversations } from "./hook/useConversations";
 import { useQuestion } from "./hook/useQuestion";
-import { ConversationSelectedTypeAssistant, ConversationSelectedTypeSnippet, ConversationType, GetNewConversation } from "./type/conversation";
+import {
+  ConversationSelectedTypeAssistant,
+  ConversationSelectedTypeSnippet,
+  ConversationType,
+  GetNewConversation,
+} from "./type/conversation";
 import { ChatView } from "./view/chat/view";
 import { useAssistant } from "./hook/useAssistant";
 import { AssistantDefault } from "./type/assistant";
@@ -13,15 +18,15 @@ import { GetNewSnippet } from "./type/snippet";
 import { ChatDropdown } from "./view/chat/dropdown";
 import { TalkAssistantType, TalkSnippetType } from "./type/talk";
 
-export default function Chat(props: { conversation?: ConversationType, arguments?: { ask: string } }) {
+export default function Chat(props: { conversation?: ConversationType; arguments?: { ask: string } }) {
   const { push } = useNavigation();
   const conversations = useConversations();
   const assistants = useAssistant();
   const snippets = useSnippet();
   const chats = useChat();
-  const question = useQuestion({ 
-    initialQuestion: (props.arguments && props.arguments.ask ? props.arguments.ask : ""), 
-    disableAutoLoad: props.conversation ? true : (props.arguments && props.arguments.ask ? true : false) 
+  const question = useQuestion({
+    initialQuestion: props.arguments && props.arguments.ask ? props.arguments.ask : "",
+    disableAutoLoad: props.conversation ? true : props.arguments && props.arguments.ask ? true : false,
   });
   const isLoadConversation = props.conversation ? true : false;
 
@@ -34,7 +39,7 @@ export default function Chat(props: { conversation?: ConversationType, arguments
   const [selectedSnippet, setSelectedSnippet] = useState<TalkSnippetType | undefined>(
     props.conversation && props.conversation.snippet ? props.conversation.snippet : GetNewSnippet()
   );
-  
+
   useEffect(() => {
     if (props.conversation?.conversationId !== conversation.conversationId || conversations.data.length === 0) {
       conversations.add(conversation);
@@ -59,10 +64,12 @@ export default function Chat(props: { conversation?: ConversationType, arguments
   }, [snippets.data]);
   useEffect(() => {
     if (isLoadConversation === false && conversation.cleared === false && conversation.chats.length === 0) {
-      const convs = conversations.data.filter((conversation: ConversationType) => conversation.chats.length > 0).sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+      const convs = conversations.data
+        .filter((conversation: ConversationType) => conversation.chats.length > 0)
+        .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
       if (convs[0]) {
-        console.log("load last conversation")
-        setSelectedAssistant(convs[0].assistant)
+        console.log("load last conversation");
+        setSelectedAssistant(convs[0].assistant);
         setConversation(convs[0]);
       }
     }
@@ -73,14 +80,22 @@ export default function Chat(props: { conversation?: ConversationType, arguments
   }, [chats.data]);
   useEffect(() => {
     const selected = assistants.data.find((x: TalkAssistantType) => x.assistantId === selectedAssistant.assistantId);
-    conversation.selectedType = ConversationSelectedTypeAssistant
-    setConversation({...conversation, assistant: selected ?? conversation.assistant, updatedAt: new Date().toISOString()});
+    conversation.selectedType = ConversationSelectedTypeAssistant;
+    setConversation({
+      ...conversation,
+      assistant: selected ?? conversation.assistant,
+      updatedAt: new Date().toISOString(),
+    });
   }, [selectedAssistant]);
   useEffect(() => {
     if (selectedSnippet !== undefined) {
       const selected = snippets.data.find((x: TalkSnippetType) => x.snippetId === selectedSnippet.snippetId);
-      conversation.selectedType = ConversationSelectedTypeSnippet
-      setConversation({...conversation, snippet: selected ?? conversation.snippet, updatedAt: new Date().toISOString()});
+      conversation.selectedType = ConversationSelectedTypeSnippet;
+      setConversation({
+        ...conversation,
+        snippet: selected ?? conversation.snippet,
+        updatedAt: new Date().toISOString(),
+      });
     }
   }, [selectedSnippet]);
 
@@ -88,19 +103,19 @@ export default function Chat(props: { conversation?: ConversationType, arguments
     <ActionPanel>
       <Action title="Get Answer" icon={Icon.ArrowRight} onAction={() => chats.ask(question, undefined, conversation)} />
       <ActionPanel.Section title="Input">
-      <Action
-        title="Full Text Input"
-        shortcut={{ modifiers: ["cmd"], key: "t" }}
-        icon={Icon.Text}
-        onAction={() => {
-          push(
-            <ChatFullForm 
-              initialQuestion={question}
-              onSubmit={(question: string, file: string[] | undefined) => chats.ask(question, file, conversation)}  
-            />
-          );
-        }}
-      />
+        <Action
+          title="Full Text Input"
+          shortcut={{ modifiers: ["cmd"], key: "t" }}
+          icon={Icon.Text}
+          onAction={() => {
+            push(
+              <ChatFullForm
+                initialQuestion={question}
+                onSubmit={(question: string, file: string[] | undefined) => chats.ask(question, file, conversation)}
+              />
+            );
+          }}
+        />
       </ActionPanel.Section>
     </ActionPanel>
   );
@@ -118,19 +133,21 @@ export default function Chat(props: { conversation?: ConversationType, arguments
         !question.data ? (
           <ActionPanel>
             <ActionPanel.Section title="Input">
-            <Action
-              title="Full Text Input"
-              shortcut={{ modifiers: ["cmd"], key: "t" }}
-              icon={Icon.Text}
-              onAction={() => {
-                push(
-                  <ChatFullForm 
-                    initialQuestion={question.data}
-                    onSubmit={(question: string, file: string[] | undefined) => chats.ask(question, file, conversation)}  
-                  />
-                );
-              }}
-            />
+              <Action
+                title="Full Text Input"
+                shortcut={{ modifiers: ["cmd"], key: "t" }}
+                icon={Icon.Text}
+                onAction={() => {
+                  push(
+                    <ChatFullForm
+                      initialQuestion={question.data}
+                      onSubmit={(question: string, file: string[] | undefined) =>
+                        chats.ask(question, file, conversation)
+                      }
+                    />
+                  );
+                }}
+              />
             </ActionPanel.Section>
           </ActionPanel>
         ) : (
@@ -139,8 +156,8 @@ export default function Chat(props: { conversation?: ConversationType, arguments
       }
       selectedItemId={chats.selectedChatId || undefined}
       searchBarAccessory={
-        <ChatDropdown 
-          assistants={assistants.data} 
+        <ChatDropdown
+          assistants={assistants.data}
           snippets={snippets.data}
           selectedAssistant={selectedAssistant}
           onAssistantChange={setSelectedAssistant}

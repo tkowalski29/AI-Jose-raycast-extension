@@ -16,12 +16,17 @@ export const SnippetListView = ({
       {Object.entries(SnippetGroupByCategory(snippets) as Record<string, TalkSnippetType[]>).map(([name, list]) => (
         <List.Section key={name} title={name} subtitle={list.length.toLocaleString()}>
           {list.map((snippet: TalkSnippetType) => (
-            <SnippetListItem key={snippet.snippetId} snippet={snippet} selectedsnippet={selectedSnippet} actionPanel={actionPanel} />
+            <SnippetListItem
+              key={snippet.snippetId}
+              snippet={snippet}
+              selectedsnippet={selectedSnippet}
+              actionPanel={actionPanel}
+            />
           ))}
         </List.Section>
       ))}
     </>
-  )
+  );
 };
 
 export function SnippetGroupByCategory(array: TalkSnippetType[]) {
@@ -49,7 +54,9 @@ export const SnippetListItem = ({
       id={snippet.snippetId}
       key={snippet.snippetId}
       title={snippet.title}
-      subtitle={ConfigurationModelCollection.find((x: { key: string, title: string}) => x.key === snippet.model)?.title}
+      subtitle={
+        ConfigurationModelCollection.find((x: { key: string; title: string }) => x.key === snippet.model)?.title
+      }
       icon={snippet.emoji}
       detail={<ModelDetailView snippet={snippet} />}
       actions={selectedsnippet === snippet.snippetId ? actionPanel(snippet) : undefined}
@@ -69,10 +76,22 @@ const ModelDetailView = (props: { snippet: TalkSnippetType; markdown?: string | 
           <List.Item.Detail.Metadata.Label title="Category" text={snippet.category} />
           <List.Item.Detail.Metadata.Label title="Emoji" text={snippet.emoji} icon={snippet.emoji} />
           <List.Item.Detail.Metadata.Separator />
-          <List.Item.Detail.Metadata.Label title="Model" text={ConfigurationModelCollection.find((x: { key: string, title: string}) => x.key === snippet.model)?.title} />
+          <List.Item.Detail.Metadata.Label
+            title="Model"
+            text={
+              ConfigurationModelCollection.find((x: { key: string; title: string }) => x.key === snippet.model)?.title
+            }
+          />
           <List.Item.Detail.Metadata.Label title="Temperature Model" text={snippet.modelTemperature} />
-          <List.Item.Detail.Metadata.Label title="Webhook" text={(snippet.webhookUrl ? snippet.webhookUrl : "")} />
-          <List.Item.Detail.Metadata.Label title="Type communication" text={ConfigurationTypeCommunication.find((x: { key: string, title: string}) => x.key === snippet.typeCommunication)?.title} />
+          <List.Item.Detail.Metadata.Label title="Webhook" text={snippet.webhookUrl ? snippet.webhookUrl : ""} />
+          <List.Item.Detail.Metadata.Label
+            title="Type communication"
+            text={
+              ConfigurationTypeCommunication.find(
+                (x: { key: string; title: string }) => x.key === snippet.typeCommunication
+              )?.title
+            }
+          />
           <List.Item.Detail.Metadata.Separator />
           <List.Item.Detail.Metadata.Label title="Local" text={snippet.isLocal ? "YES" : "no"} />
           <List.Item.Detail.Metadata.Label title="ID" text={snippet.snippetId} />

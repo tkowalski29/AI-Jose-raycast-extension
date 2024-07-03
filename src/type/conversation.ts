@@ -3,8 +3,8 @@ import { HookType, PromiseFunctionWithOneArgType } from "./hook";
 import { GetDevice, GetUserName } from "./config";
 import { TalkAssistantType, TalkSnippetType, TalkType } from "./talk";
 
-export const ConversationSelectedTypeAssistant: string = "assistant"
-export const ConversationSelectedTypeSnippet: string = "snippet"
+export const ConversationSelectedTypeAssistant = "assistant";
+export const ConversationSelectedTypeSnippet = "snippet";
 
 export function GetNewConversation(assistant: TalkAssistantType, cleared: boolean): ConversationType {
   return {
@@ -18,7 +18,7 @@ export function GetNewConversation(assistant: TalkAssistantType, cleared: boolea
     createdAt: new Date().toISOString(),
     chats: [],
     cleared: cleared,
-  }
+  };
 }
 
 export interface ConversationType {
@@ -34,6 +34,6 @@ export interface ConversationType {
   cleared: boolean;
 }
 
-export type ConversationsHookType = HookType<ConversationType> & { 
-  update: PromiseFunctionWithOneArgType<ConversationType> 
-}
+export type ConversationsHookType = HookType<ConversationType> & {
+  update: PromiseFunctionWithOneArgType<ConversationType>;
+};

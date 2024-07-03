@@ -13,128 +13,128 @@ export interface ConfigurationPreferencesType {
   IsClearHistoryWhenUseSnippet(): boolean;
 }
 
-export const ConfigurationTypeCommunicationOpenAiKey: string = "open-ai-key"
-export const ConfigurationTypeCommunicationLangChain: string = "lang-chain"
-export const ConfigurationTypeCommunicationExternalApi: string = "external-api"
-export const ConfigurationTypeCommunicationBinaryFile: string = "binary-file"
-export const ConfigurationTypeCommunicationDefault: string = ConfigurationTypeCommunicationLangChain
+export const ConfigurationTypeCommunicationOpenAiKey = "open-ai-key";
+export const ConfigurationTypeCommunicationLangChain = "lang-chain";
+export const ConfigurationTypeCommunicationExternalApi = "external-api";
+export const ConfigurationTypeCommunicationBinaryFile = "binary-file";
+export const ConfigurationTypeCommunicationDefault: string = ConfigurationTypeCommunicationLangChain;
 
-export const ConfigurationTypeCommunication: {key: string, title: string}[] = [
+export const ConfigurationTypeCommunication: { key: string; title: string }[] = [
   // {
   //   key: ConfigurationTypeCommunicationOpenAiKey,
   //   title: "Local OpenAi key communication - DEPRECATED"
   // },
   {
     key: ConfigurationTypeCommunicationLangChain,
-    title: "Local LangChain communication"
+    title: "Local LangChain communication",
   },
   {
     key: ConfigurationTypeCommunicationExternalApi,
-    title: "External endpoint api communication"
+    title: "External endpoint api communication",
   },
   {
     key: ConfigurationTypeCommunicationBinaryFile,
-    title: "Local binnary file communication"
+    title: "Local binnary file communication",
   },
-]
+];
 
-export const ConfigurationModelDefault: string = "openai__gpt-3.5-turbo"
+export const ConfigurationModelDefault = "openai__gpt-3.5-turbo";
 
-export const ConfigurationModelCollection: {key: string, title: string}[] = [
+export const ConfigurationModelCollection: { key: string; title: string }[] = [
   {
     key: "openai__gpt-4o-2024-05-13",
-    title: "GPT 4 o 2024-05-13"
+    title: "GPT 4 o 2024-05-13",
   },
   {
     key: "openai__gpt-4o",
-    title: "GPT 4 o"
+    title: "GPT 4 o",
   },
   {
     key: "openai__gpt-4-turbo-2024-04-09",
-    title: "GPT 4 Turbo 2024-04-09"
+    title: "GPT 4 Turbo 2024-04-09",
   },
   {
     key: "openai__gpt-4-turbo",
-    title: "GPT 4 Turbo"
+    title: "GPT 4 Turbo",
   },
   {
     key: "openai__gpt-4-turbo-preview",
-    title: "GPT 4 Turbo Preview"
+    title: "GPT 4 Turbo Preview",
   },
   {
     key: "openai__gpt-4-1106-preview",
-    title: "GPT 4 1106 Preview"
+    title: "GPT 4 1106 Preview",
   },
   {
     key: "openai__gpt-4",
-    title: "GPT 4"
+    title: "GPT 4",
   },
   {
     key: "openai__gpt-4-0613",
-    title: "GPT 4 0613"
+    title: "GPT 4 0613",
   },
   {
     key: "openai__gpt-3.5-turbo-0125",
-    title: "GPT 3.5 Turbo 0125"
+    title: "GPT 3.5 Turbo 0125",
   },
   {
     key: "openai__gpt-3.5-turbo-1106",
-    title: "GPT 3.5 Turbo 1106"
+    title: "GPT 3.5 Turbo 1106",
   },
   {
     key: "openai__gpt-3.5-turbo-0613",
-    title: "GPT 3.5 Turbo 0613"
+    title: "GPT 3.5 Turbo 0613",
   },
   {
     key: "openai__gpt-3.5-turbo",
-    title: "GPT 3.5 Turbo"
-  }
-]
+    title: "GPT 3.5 Turbo",
+  },
+];
 
 export function ClearImportModel(str: string): string {
-  let s = str
-  
+  const s = str;
+
   s.replace(/openai-/g, "openai__");
 
-  return s
+  return s;
 }
 
 export function ClearImportModelTemperature(str: string, base: string): string {
   if (str === "low") {
-    return "0.2"
+    return "0.2";
   } else if (str === "medium") {
-    return "0.7"
+    return "0.7";
   } else if (str === "maximum") {
-    return "1.0"
+    return "1.0";
   }
 
-  return base
+  return base;
 }
 
 export function ChangePromptSystem(str: string) {
   const currentDateTime = new Date();
   const year = currentDateTime.getFullYear();
-  const month = String(currentDateTime.getMonth() + 1).padStart(2, '0');
-  const day = String(currentDateTime.getDate()).padStart(2, '0');
-  const hours = String(currentDateTime.getHours()).padStart(2, '0');
-  const minutes = String(currentDateTime.getMinutes()).padStart(2, '0');
-  const seconds = String(currentDateTime.getSeconds()).padStart(2, '0');
-  let s = str
+  const month = String(currentDateTime.getMonth() + 1).padStart(2, "0");
+  const day = String(currentDateTime.getDate()).padStart(2, "0");
+  const hours = String(currentDateTime.getHours()).padStart(2, "0");
+  const minutes = String(currentDateTime.getMinutes()).padStart(2, "0");
+  const seconds = String(currentDateTime.getSeconds()).padStart(2, "0");
+  const s = str;
 
   return s.replace(/{{-CURRENT_DATETIME-}}/g, `${year}/${month}/${day}, ${hours}:${minutes}:${seconds}`);
 
-  return s
+  return s;
 }
 
 export function ClearPromptSystem(str: string) {
-  let s = str
-  
+  const s = str;
+
   // s.replace(/"/g, "\'");
   // s = s.replace(/'/g, "\'");
   // s = s.replace(/{/g, '<');
   // s = s.replace(/}/g, '>');
 
-  return s
+  return s;
 }
 
 function getConfig(): ConfigurationPreferencesType {
@@ -142,7 +142,7 @@ function getConfig(): ConfigurationPreferencesType {
 }
 
 export function GetApiOpenAiKey(): string {
-  return getConfig().apiOpenAiKey
+  return getConfig().apiOpenAiKey;
 }
 
 export function GetApiEnpointUrl(): string {
@@ -150,15 +150,15 @@ export function GetApiEnpointUrl(): string {
 }
 
 export function GetApiBinnaryPath(): string {
-  return getConfig().apiBinnary
+  return getConfig().apiBinnary;
 }
 
 export function GetApiEndpointData(): string {
-  return getConfig().apiEndpointData
+  return getConfig().apiEndpointData;
 }
 
 export function IsClearHistoryWhenUseSnippet(): boolean {
-  return getConfig().clearHistoryWhenUseSnippet
+  return getConfig().clearHistoryWhenUseSnippet;
 }
 
 export function GetUserName(): string {
@@ -167,5 +167,5 @@ export function GetUserName(): string {
 }
 
 export function GetDevice(): string {
-  return "raycast"
+  return "raycast";
 }

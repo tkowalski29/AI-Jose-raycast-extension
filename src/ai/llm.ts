@@ -6,9 +6,9 @@ import { TalkType } from "../type/talk";
 
 export const Call = async (
   chat: TalkType,
-  messages: any[], 
-  config: { stream: boolean, temperature: string, model: string }, 
-  interaction: { toast: Toast, setData: any, setStreamData: any, setLoading: any }
+  messages: any[],
+  config: { stream: boolean; temperature: string; model: string },
+  interaction: { toast: Toast; setData: any; setStreamData: any; setLoading: any }
 ): Promise<any> => {
   const modelSettings = {
     apiKey: GetApiOpenAiKey(),
@@ -27,28 +27,42 @@ export const Call = async (
                 return a;
               });
             });
-    
+
             setTimeout(async () => {
               interaction.setStreamData(undefined);
             }, 5);
-    
+
             interaction.setLoading(false);
-    
+
             interaction.toast.title = "Got your answer!";
             interaction.toast.style = Toast.Style.Success;
-            return
+            return;
           }
           if (chat.result === undefined) {
-            chat.result = { text: token, imageExist: false, images: undefined, actionType: "", actionName: "", actionStatus: "" }
+            chat.result = {
+              text: token,
+              imageExist: false,
+              images: undefined,
+              actionType: "",
+              actionName: "",
+              actionStatus: "",
+            };
           }
 
           chat.result.text += token;
-          
+
           interaction.setStreamData({ ...chat, result: chat.result });
         },
         handleLLMEnd: async (output: any) => {
           if (chat.result === undefined) {
-            chat.result = { text: output.generations[0][0].text, imageExist: false, images: undefined, actionType: "", actionName: "", actionStatus: "" }
+            chat.result = {
+              text: output.generations[0][0].text,
+              imageExist: false,
+              images: undefined,
+              actionType: "",
+              actionName: "",
+              actionStatus: "",
+            };
           }
           chat.result.text = output.generations[0][0].text;
 
@@ -60,13 +74,13 @@ export const Call = async (
               return a;
             });
           });
-  
+
           setTimeout(async () => {
             interaction.setStreamData(undefined);
           }, 5);
-  
+
           interaction.setLoading(false);
-  
+
           interaction.toast.title = "Got your answer!";
           interaction.toast.style = Toast.Style.Success;
         },
@@ -80,10 +94,10 @@ export const Call = async (
   const c = new ChatOpenAI(modelSettings);
   await c.invoke(messages);
 
-  return chat
-}
+  return chat;
+};
 
 export const Embed = async (query: string) => {
   const embeddings = new OpenAIEmbeddings();
   return embeddings.embedQuery(query);
-}
+};

@@ -2,7 +2,7 @@ import { ConfigurationTypeCommunicationDefault } from "./config";
 import { HookType, PromiseFunctionNoArgType, PromiseFunctionWithOneArgType } from "./hook";
 import { TalkAssistantType } from "./talk";
 
-export const AssistantDefaultTemperature: string = "0.7"
+export const AssistantDefaultTemperature = "0.7";
 
 export const AssistantDefault: TalkAssistantType = {
   typeCommunication: ConfigurationTypeCommunicationDefault,
@@ -32,9 +32,9 @@ export const AssistantDefault: TalkAssistantType = {
   webhookUrl: undefined,
   additionalData: undefined,
   isLocal: true,
-}
+};
 
 export type AssistantHookType = HookType<TalkAssistantType> & {
   update: PromiseFunctionWithOneArgType<TalkAssistantType>;
   reload: PromiseFunctionNoArgType;
-}
+};

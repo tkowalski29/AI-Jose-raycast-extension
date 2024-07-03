@@ -15,7 +15,12 @@ export const AssistantListView = ({
 }) => (
   <List.Section title={title} subtitle={assistants.length.toLocaleString()}>
     {assistants.map((assistant: TalkAssistantType) => (
-      <AssistantListItem key={assistant.assistantId} assistant={assistant} selectedAssistant={selectedAssistant} actionPanel={actionPanel} />
+      <AssistantListItem
+        key={assistant.assistantId}
+        assistant={assistant}
+        selectedAssistant={selectedAssistant}
+        actionPanel={actionPanel}
+      />
     ))}
   </List.Section>
 );
@@ -34,7 +39,9 @@ export const AssistantListItem = ({
       id={assistant.assistantId}
       key={assistant.assistantId}
       title={assistant.title}
-      subtitle={ConfigurationModelCollection.find((x: { key: string, title: string}) => x.key === assistant.model)?.title}
+      subtitle={
+        ConfigurationModelCollection.find((x: { key: string; title: string }) => x.key === assistant.model)?.title
+      }
       icon={assistant.avatar ?? assistant.emoji}
       detail={<ModelDetailView assistant={assistant} />}
       actions={selectedAssistant === assistant.assistantId ? actionPanel(assistant) : undefined}
@@ -55,10 +62,22 @@ const ModelDetailView = (props: { assistant: TalkAssistantType; markdown?: strin
           <List.Item.Detail.Metadata.Label title="Avatar" text={assistant.avatar} icon={assistant.avatar} />
           <List.Item.Detail.Metadata.Label title="Emoji" text={assistant.emoji} icon={assistant.emoji} />
           <List.Item.Detail.Metadata.Separator />
-          <List.Item.Detail.Metadata.Label title="Model" text={ConfigurationModelCollection.find((x: { key: string, title: string}) => x.key === assistant.model)?.title} />
+          <List.Item.Detail.Metadata.Label
+            title="Model"
+            text={
+              ConfigurationModelCollection.find((x: { key: string; title: string }) => x.key === assistant.model)?.title
+            }
+          />
           <List.Item.Detail.Metadata.Label title="Temperature Model" text={assistant.modelTemperature} />
           {/* <List.Item.Detail.Metadata.Label title="Webhook" text={(assistant.webhookUrl ? assistant.webhookUrl : "")} /> */}
-          <List.Item.Detail.Metadata.Label title="Type communication" text={ConfigurationTypeCommunication.find((x: { key: string, title: string}) => x.key === assistant.typeCommunication)?.title} />
+          <List.Item.Detail.Metadata.Label
+            title="Type communication"
+            text={
+              ConfigurationTypeCommunication.find(
+                (x: { key: string; title: string }) => x.key === assistant.typeCommunication
+              )?.title
+            }
+          />
           <List.Item.Detail.Metadata.Separator />
           <List.Item.Detail.Metadata.Label title="Additional data" text={assistant.additionalData} />
           <List.Item.Detail.Metadata.Label title="Local" text={assistant.isLocal ? "YES" : "no"} />

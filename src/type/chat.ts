@@ -8,8 +8,8 @@ import { TalkAssistantType, TalkSnippetType, TalkType, TalkQuestionFileType, Tal
 
 export function GetNewChat(
   question: TalkQuestionType,
-  conversation: ConversationType, 
-  assistant: TalkAssistantType, 
+  conversation: ConversationType,
+  assistant: TalkAssistantType,
   snippet: TalkSnippetType | undefined
 ): TalkType {
   return {
@@ -24,7 +24,7 @@ export function GetNewChat(
     createdAt: new Date().toISOString(),
     streaming: false,
     result: undefined,
-  }
+  };
 }
 
 export interface ChatHookType {
@@ -52,7 +52,7 @@ export interface ChangeModelPropType {
   selectedAssistant: TalkAssistantType;
   onAssistantChange: SetType<TalkAssistantType>;
 }
-  
+
 export interface CreateChatCompletionDeltaResponseType {
   id: string;
   object: "chat.completion.chunk";
@@ -83,6 +83,6 @@ export interface ChangeDropdownPropType {
   assistants: TalkAssistantType[];
   snippets: TalkSnippetType[];
   selectedAssistant: TalkAssistantType;
-  onAssistantChange: SetType<TalkAssistantType>; 
+  onAssistantChange: SetType<TalkAssistantType>;
   onSnippetChange: SetType<TalkSnippetType | undefined>;
 }

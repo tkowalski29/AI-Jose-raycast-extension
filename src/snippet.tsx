@@ -8,17 +8,17 @@ import { TalkSnippetType } from "./type/talk";
 import { SnippetHookType } from "./type/snippet";
 
 export default function Snippet() {
-  let collections = useSnippet();
+  const collections = useSnippet();
   const [searchText, setSearchText] = useState<string>("");
   const [selectedSnippetId, setSelectedSnippetId] = useState<string | null>(null);
   const { push } = useNavigation();
-  let collectionsSnipppets: SnippetHookType = collections
+  const collectionsSnipppets: SnippetHookType = collections;
 
   useEffect(() => {
     if (searchText != "" && searchText.length > 1) {
-      collectionsSnipppets.data = collections.data.filter((x: TalkSnippetType) => x.title.includes(searchText))
+      collectionsSnipppets.data = collections.data.filter((x: TalkSnippetType) => x.title.includes(searchText));
     } else {
-      collectionsSnipppets.data = collections.data
+      collectionsSnipppets.data = collections.data;
     }
   }, [searchText]);
 
@@ -35,13 +35,9 @@ export default function Snippet() {
         icon={Icon.PlusCircle}
         onAction={() => push(<SnippetImportForm use={{ snippets: collectionsSnipppets }} />)}
       />
-      <Action
-        title={"Reload Snippets"}
-        icon={Icon.Download}
-        onAction={() => collections.reload()}
-      />
+      <Action title={"Reload Snippets"} icon={Icon.Download} onAction={() => collections.reload()} />
     </ActionPanel>
-  )
+  );
   const getActionItem = (snippet: TalkSnippetType) => (
     <ActionPanel>
       <ActionPanel.Section title="Modify">
@@ -64,7 +60,7 @@ export default function Snippet() {
                 title: "Remove",
                 style: Alert.ActionStyle.Destructive,
                 onAction: () => {
-                  collections.remove(snippet)
+                  collections.remove(snippet);
                 },
               },
             });
@@ -82,11 +78,7 @@ export default function Snippet() {
         icon={Icon.PlusCircle}
         onAction={() => push(<SnippetImportForm use={{ snippets: collections }} />)}
       />
-      <Action
-        title={"Reload Snippets"}
-        icon={Icon.Download}
-        onAction={() => collections.reload()}
-      />
+      <Action title={"Reload Snippets"} icon={Icon.Download} onAction={() => collections.reload()} />
     </ActionPanel>
   );
 
@@ -97,18 +89,14 @@ export default function Snippet() {
       filtering={false}
       throttle={false}
       selectedItemId={selectedSnippetId || undefined}
-      onSelectionChange={(id) => setSelectedSnippetId(id) }
+      onSelectionChange={(id) => setSelectedSnippetId(id)}
       searchBarPlaceholder="Search Snippet..."
       searchText={searchText}
       onSearchTextChange={setSearchText}
       actions={getActionList}
     >
       {collectionsSnipppets.data.length === 0 ? (
-        <List.EmptyView 
-          title="No Snippets" 
-          description="Create new Snippet with ⌘ + c shortcut" 
-          icon={Icon.Stars} 
-        />
+        <List.EmptyView title="No Snippets" description="Create new Snippet with ⌘ + c shortcut" icon={Icon.Stars} />
       ) : (
         <SnippetListView
           key="Snippets"
