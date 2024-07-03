@@ -5,7 +5,6 @@ export interface ConfigurationPreferencesType {
   apiEndpoint: string;
   apiBinnary: string;
   apiEndpointData: string;
-  clearHistoryWhenUseSnippet: boolean;
   GetApiOpenAiKey(): string;
   GetApiEnpointUrl(): string;
   GetApiBinnaryPath(): string;
@@ -150,10 +149,6 @@ export function GetApiBinnaryPath(): string {
 
 export function GetApiEndpointData(): string {
   return getConfig().apiEndpointData;
-}
-
-export function IsClearHistoryWhenUseSnippet(): boolean {
-  return getConfig().clearHistoryWhenUseSnippet;
 }
 
 export function GetUserName(): string {

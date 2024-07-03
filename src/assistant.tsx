@@ -6,19 +6,21 @@ import { AssistantListView } from "./view/assistant/list";
 import { AssistantImportForm } from "./view/assistant/importForm";
 import { TalkAssistantType } from "./type/talk";
 import { AssistantHookType } from "./type/assistant";
+import { useSnippet } from "./hook/useSnippet";
 
 export default function Assistant() {
-  const collections = useAssistant();
+  const collectionsAssistant = useAssistant();
+  const collectionsSnippet = useSnippet();
   const [searchText, setSearchText] = useState<string>("");
   const [selectedAssistantId, setSelectedAssistantId] = useState<string | null>(null);
   const { push } = useNavigation();
-  const collectionsAssistants: AssistantHookType = collections;
+  const collectionsAssistants: AssistantHookType = collectionsAssistant;
 
   useEffect(() => {
     if (searchText != "" && searchText.length > 1) {
-      collectionsAssistants.data = collections.data.filter((x: TalkAssistantType) => x.title.includes(searchText));
+      collectionsAssistants.data = collectionsAssistant.data.filter((x: TalkAssistantType) => x.title.includes(searchText));
     } else {
-      collectionsAssistants.data = collections.data;
+      collectionsAssistants.data = collectionsAssistant.data;
     }
   }, [searchText]);
 
@@ -28,14 +30,14 @@ export default function Assistant() {
         title={"Create Assistant"}
         shortcut={{ modifiers: ["cmd"], key: "c" }}
         icon={Icon.Plus}
-        onAction={() => push(<AssistantForm name={searchText} use={{ assistants: collectionsAssistants }} />)}
+        onAction={() => push(<AssistantForm name={searchText} use={{ assistants: collectionsAssistants, snippets: collectionsSnippet.data }} />)}
       />
       <Action
         title={"Import Assistant"}
         icon={Icon.PlusCircle}
         onAction={() => push(<AssistantImportForm use={{ assistants: collectionsAssistants }} />)}
       />
-      <Action title={"Reload Assistants"} icon={Icon.Download} onAction={() => collections.reload()} />
+      <Action title={"Reload Assistants"} icon={Icon.Download} onAction={() => collectionsAssistant.reload()} />
     </ActionPanel>
   );
   const getActionItem = (assistant: TalkAssistantType) => (
@@ -45,7 +47,7 @@ export default function Assistant() {
           title={"Edit Assistant"}
           shortcut={{ modifiers: ["cmd"], key: "e" }}
           icon={Icon.Pencil}
-          onAction={() => push(<AssistantForm assistant={assistant} use={{ assistants: collectionsAssistants }} />)}
+          onAction={() => push(<AssistantForm assistant={assistant} use={{ assistants: collectionsAssistants, snippets: collectionsSnippet.data }} />)}
         />
         <Action
           style={Action.Style.Destructive}
@@ -60,7 +62,7 @@ export default function Assistant() {
                 title: "Remove",
                 style: Alert.ActionStyle.Destructive,
                 onAction: () => {
-                  collections.remove(assistant);
+                  collectionsAssistant.remove(assistant);
                 },
               },
             });
@@ -71,21 +73,21 @@ export default function Assistant() {
         title={"Create Assistant"}
         shortcut={{ modifiers: ["cmd"], key: "c" }}
         icon={Icon.Plus}
-        onAction={() => push(<AssistantForm name={searchText} use={{ assistants: collectionsAssistants }} />)}
+        onAction={() => push(<AssistantForm name={searchText} use={{ assistants: collectionsAssistants, snippets: collectionsSnippet.data }} />)}
       />
       <Action
         title={"Import Assistant"}
         icon={Icon.PlusCircle}
         onAction={() => push(<AssistantImportForm use={{ assistants: collectionsAssistants }} />)}
       />
-      <Action title={"Reload Assistants from api"} icon={Icon.Download} onAction={() => collections.reload()} />
+      <Action title={"Reload Assistants from api"} icon={Icon.Download} onAction={() => collectionsAssistant.reload()} />
     </ActionPanel>
   );
 
   return (
     <List
       isShowingDetail={collectionsAssistants.data.length === 0 ? false : true}
-      isLoading={collections.isLoading}
+      isLoading={collectionsAssistant.isLoading}
       filtering={false}
       throttle={false}
       selectedItemId={selectedAssistantId || undefined}
@@ -106,6 +108,7 @@ export default function Assistant() {
           key="assistants"
           title="Assistants"
           assistants={collectionsAssistants.data}
+          snippets={collectionsSnippet.data}
           selectedAssistant={selectedAssistantId}
           actionPanel={getActionItem}
         />

@@ -1,6 +1,5 @@
 import { AssistantDefaultTemperature } from "../../type/assistant";
 import { SnippetDefaultTemperature } from "../../type/snippet";
-import { IsClearHistoryWhenUseSnippet } from "../../type/config";
 import { TalkType } from "../../type/talk";
 import { ReplacePlaceholders } from "../../common/prompt";
 import { Respond } from "../../ai/logic/thinking";
@@ -24,9 +23,6 @@ export async function RunLangChain(
     promptString = chat.snippet.promptSystem;
     temperature = chat.snippet.modelTemperature ? chat.snippet.modelTemperature : SnippetDefaultTemperature;
     model = chat.snippet.model;
-    if (IsClearHistoryWhenUseSnippet()) {
-      loadHistory = false;
-    }
   }
   promptString = ReplacePlaceholders(chat, promptString);
   model = model.split("__")[1];

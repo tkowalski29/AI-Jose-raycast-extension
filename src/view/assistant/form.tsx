@@ -8,11 +8,11 @@ import {
   ConfigurationTypeCommunication,
   ConfigurationTypeCommunicationDefault,
 } from "../../type/config";
-import { TalkAssistantType } from "../../type/talk";
+import { TalkAssistantType, TalkSnippetType } from "../../type/talk";
 
 export const AssistantForm = (props: {
   assistant?: TalkAssistantType;
-  use: { assistants: AssistantHookType };
+  use: { assistants: AssistantHookType, snippets: TalkSnippetType[] };
   name?: string;
 }) => {
   const { use, assistant } = props;
@@ -48,6 +48,7 @@ export const AssistantForm = (props: {
       emoji: assistant?.emoji ?? "",
       model: assistant?.model ?? ConfigurationModelDefault,
       additionalData: assistant?.additionalData ?? "",
+      snippet: assistant?.snippet ?? [],
       promptSystem: assistant?.promptSystem ?? "",
       modelTemperature: assistant?.modelTemperature ?? AssistantDefaultTemperature,
       webhookUrl: assistant?.webhookUrl ?? "",
@@ -83,6 +84,11 @@ export const AssistantForm = (props: {
             <Form.Dropdown.Item value={value.key} key={value.key} title={value.title} />
           ))}
         </Form.Dropdown>
+        <Form.TagPicker title="Available snippets" {...itemProps.snippet}>
+          {Object.entries(use.snippets).map(([, value]) => (
+            <Form.TagPicker.Item value={value.snippetId} key={value.snippetId} title={"(" + value.category + ") " + value.title} icon={value.emoji} />
+          ))}
+        </Form.TagPicker>
         <Form.TextArea
           title="Additional data"
           placeholder="Additional data your assistant"

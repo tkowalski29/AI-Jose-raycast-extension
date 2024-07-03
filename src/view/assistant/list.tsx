@@ -1,15 +1,17 @@
 import { List } from "@raycast/api";
 import { ConfigurationModelCollection, ConfigurationTypeCommunication } from "../../type/config";
-import { TalkAssistantType } from "../../type/talk";
+import { TalkAssistantType, TalkSnippetType } from "../../type/talk";
 
 export const AssistantListView = ({
   title,
   assistants,
+  snippets,
   selectedAssistant,
   actionPanel,
 }: {
   title: string;
   assistants: TalkAssistantType[];
+  snippets: TalkSnippetType[];
   selectedAssistant: string | null;
   actionPanel: (assistant: TalkAssistantType) => JSX.Element;
 }) => (
@@ -18,6 +20,7 @@ export const AssistantListView = ({
       <AssistantListItem
         key={assistant.assistantId}
         assistant={assistant}
+        snippets={snippets}
         selectedAssistant={selectedAssistant}
         actionPanel={actionPanel}
       />
@@ -25,12 +28,14 @@ export const AssistantListView = ({
   </List.Section>
 );
 
-export const AssistantListItem = ({
+const AssistantListItem = ({
   assistant,
+  snippets,
   selectedAssistant,
   actionPanel,
 }: {
   assistant: TalkAssistantType;
+  snippets: TalkSnippetType[];
   selectedAssistant: string | null;
   actionPanel: (assistant: TalkAssistantType) => JSX.Element;
 }) => {
@@ -43,14 +48,14 @@ export const AssistantListItem = ({
         ConfigurationModelCollection.find((x: { key: string; title: string }) => x.key === assistant.model)?.title
       }
       icon={assistant.avatar ?? assistant.emoji}
-      detail={<ModelDetailView assistant={assistant} />}
+      detail={<ModelDetailView assistant={assistant} snippets={snippets} />}
       actions={selectedAssistant === assistant.assistantId ? actionPanel(assistant) : undefined}
     />
   );
 };
 
-const ModelDetailView = (props: { assistant: TalkAssistantType; markdown?: string | null | undefined }) => {
-  const { assistant, markdown } = props;
+const ModelDetailView = (props: { assistant: TalkAssistantType; snippets: TalkSnippetType[]; markdown?: string | null | undefined }) => {
+  const { assistant, snippets, markdown } = props;
 
   return (
     <List.Item.Detail
@@ -83,6 +88,15 @@ const ModelDetailView = (props: { assistant: TalkAssistantType; markdown?: strin
           <List.Item.Detail.Metadata.Label title="Local" text={assistant.isLocal ? "YES" : "no"} />
           <List.Item.Detail.Metadata.Label title="ID" text={assistant.assistantId} />
           <List.Item.Detail.Metadata.Separator />
+          <List.Item.Detail.Metadata.Label title="Available snippets" text={assistant.snippet?.length.toString()} />
+          {assistant.snippet?.map((snippetId: string) => (
+            <List.Item.Detail.Metadata.Label 
+              key={snippetId}
+              title=""
+              text={snippets.find((x: TalkSnippetType) => x.snippetId === snippetId)?.title} 
+              icon={snippets.find((x: TalkSnippetType) => x.snippetId === snippetId)?.emoji}
+            />
+          ))}
         </List.Item.Detail.Metadata>
       }
     />

@@ -75,15 +75,6 @@
       "description": "API endpoint for download assistants and snippets",
       "type": "textfield",
       "required": false
-    },
-    {
-      "title": "Clear history when use snippet",
-      "name": "clearHistoryWhenUseSnippet",
-      "label": "YES clear history when use snippet",
-      "description": "When user choose snippet, history is cleaning. Is working only on local communication",
-      "type": "checkbox",
-      "required": false,
-      "default": false
     }
   ],
   "tools": [],

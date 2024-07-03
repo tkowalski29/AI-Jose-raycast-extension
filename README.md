@@ -18,10 +18,6 @@ Chat with GPT straight from your computer
 
 # Still in development
 
-1. Change flow: 1 we choose an assistant, 2 we choose a snippet if we want.
-2. Possibility to define which snippets will be used in which assistant
-3. Remove clearHistoryWhenUseSnippet - The chat always takes the context of the assistant.
-
 #### Features
 - langChain - intent
 - langChain - skill

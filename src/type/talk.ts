@@ -44,6 +44,7 @@ export interface TalkAssistantType {
   promptSystem: string;
   webhookUrl: string | undefined;
   additionalData: string | undefined;
+  snippet: string[] | undefined;
   isLocal: boolean;
 }
 
