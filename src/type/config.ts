@@ -13,20 +13,15 @@ export interface ConfigurationPreferencesType {
   IsClearHistoryWhenUseSnippet(): boolean;
 }
 
-export const ConfigurationTypeCommunicationOpenAiKey = "open-ai-key";
 export const ConfigurationTypeCommunicationLangChain = "lang-chain";
 export const ConfigurationTypeCommunicationExternalApi = "external-api";
 export const ConfigurationTypeCommunicationBinaryFile = "binary-file";
 export const ConfigurationTypeCommunicationDefault: string = ConfigurationTypeCommunicationLangChain;
 
 export const ConfigurationTypeCommunication: { key: string; title: string }[] = [
-  // {
-  //   key: ConfigurationTypeCommunicationOpenAiKey,
-  //   title: "Local OpenAi key communication - DEPRECATED"
-  // },
   {
     key: ConfigurationTypeCommunicationLangChain,
-    title: "Local LangChain communication",
+    title: "Local communication",
   },
   {
     key: ConfigurationTypeCommunicationExternalApi,

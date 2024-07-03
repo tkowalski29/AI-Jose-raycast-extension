@@ -11,9 +11,7 @@ import {
   ConfigurationTypeCommunicationBinaryFile,
   ConfigurationTypeCommunicationExternalApi,
   ConfigurationTypeCommunicationLangChain,
-  ConfigurationTypeCommunicationOpenAiKey,
 } from "../type/config";
-import { RunOpenAiApi } from "./chat/openAi";
 import { RunCustomApi } from "./chat/api";
 import { RunBinnary } from "./chat/binary";
 import { TalkQuestionFileType, TalkQuestionType, TalkType } from "../type/talk";
@@ -60,12 +58,8 @@ export function useChat(): ChatHookType {
     let chatResponse: TalkType | undefined = undefined;
 
     switch (typeCommunication) {
-      case ConfigurationTypeCommunicationOpenAiKey:
-        console.log("Using local API endpoint");
-        chatResponse = await RunOpenAiApi(toast, setLoading, setData, setStreamData, data, chat);
-        break;
       case ConfigurationTypeCommunicationLangChain:
-        console.log("Using local lang chain");
+        console.log("Using local");
         chatResponse = await RunLangChain(chat, data, { toast, setData, setStreamData, setLoading });
         break;
       case ConfigurationTypeCommunicationExternalApi:

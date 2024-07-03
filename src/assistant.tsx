@@ -78,7 +78,7 @@ export default function Assistant() {
         icon={Icon.PlusCircle}
         onAction={() => push(<AssistantImportForm use={{ assistants: collectionsAssistants }} />)}
       />
-      <Action title={"Reload Assistants"} icon={Icon.Download} onAction={() => collections.reload()} />
+      <Action title={"Reload Assistants from api"} icon={Icon.Download} onAction={() => collections.reload()} />
     </ActionPanel>
   );
 

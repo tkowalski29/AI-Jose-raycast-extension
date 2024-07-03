@@ -128,7 +128,7 @@ export default function Chat(props: { conversation?: ConversationType; arguments
       isLoading={question.isLoading ? question.isLoading : chats.isLoading}
       onSearchTextChange={question.update}
       throttle={false}
-      navigationTitle={"Ask"}
+      navigationTitle={"Ask " + selectedAssistant.title}
       actions={
         !question.data ? (
           <ActionPanel>
@@ -169,7 +169,7 @@ export default function Chat(props: { conversation?: ConversationType; arguments
           chats.setSelectedChatId(id);
         }
       }}
-      searchBarPlaceholder={chats.data.length > 0 ? "Ask another question..." : "Ask a question..."}
+      searchBarPlaceholder={selectedAssistant.title + (chats.data.length > 0 ? " - Ask another question..." : " - Ask a question...")}
     >
       <ChatView
         data={conversation.chats}

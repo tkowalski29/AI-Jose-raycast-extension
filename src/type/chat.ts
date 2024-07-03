@@ -39,12 +39,13 @@ export interface ChatHookType {
   streamData: TalkType | undefined;
 }
 
-export interface ChatViewPropsType extends ChangeModelPropType {
+export interface ChatViewPropsType {
   data: TalkType[];
   question: string;
   conversation: ConversationType;
   setConversation: SetType<ConversationType>;
   use: { chats: ChatHookType; conversations: ConversationsHookType };
+  selectedAssistant: TalkAssistantType;
 }
 
 export interface ChangeModelPropType {
