@@ -52,8 +52,7 @@ Chat with GPT straight from your computer
 
 # Models availability
 
-- GPT 3.5*
-- GPT 4*
+- GPT 3.5* / 4*
 - LLaMA
 
 # How to use
