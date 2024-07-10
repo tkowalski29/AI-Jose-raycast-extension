@@ -7,7 +7,6 @@ import { InteractionCallbacks } from "./interaction";
 import { CallOllama } from "./model/ollama";
 import { BaseMessage } from "@langchain/core/messages";
 
-
 export const Call = async (
   chat: TalkType,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
