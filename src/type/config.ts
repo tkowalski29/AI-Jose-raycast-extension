@@ -1,24 +1,21 @@
 import { getPreferenceValues, environment } from "@raycast/api";
 
 export interface ConfigurationPreferencesType {
-  apiOpenAiKey: string;
-  apiOllamaHost: string;
-  apiLangSmithKey: string;
-  apiLunaryKey: string;
-  apiLangFusePublicKey: string;
-  apiLangFuseSecretKey: string;
+  anthropicApiKey: string;
+  cohereApiKey: string;
+  groqApiKey: string;
+  ollamaApiUrl: string;
+  openaiApiKey: string;
+  perplexityApiKey: string;
+
+  langfuseSecretApiKey: string;
+  lanfusePublicApiKey: string;
+  langfuseApiUrl: string;
+  lunaryApiKey: string;
+  
   apiEndpoint: string;
   apiBinnary: string;
   apiEndpointData: string;
-
-  GetApiOpenAi(): { key: string };
-  GetApiOllama(): { host: string };
-  GetApiLangSmith(): { host: string; key: string; projectName: string };
-  GetApiLunary(): { key: string };
-  GetApiLangFuse(): { host: string; public: string; secret: string };
-  GetApiEndpoint(): { host: string };
-  GetApiBinnary(): { path: string };
-  GetApiEndpointData(): { host: string };
 }
 
 export const ConfigurationTypeCommunicationLangChain = "lang-chain";
@@ -152,39 +149,61 @@ function getConfig(): ConfigurationPreferencesType {
   return getPreferenceValues<ConfigurationPreferencesType>();
 }
 
-export function GetApiOpenAi(): { key: string } {
+//
+
+export function GetAnthropicApi(): { key: string } {
   return {
-    key: getConfig().apiOpenAiKey,
+    key: getConfig().anthropicApiKey,
   };
 }
 
-export function GetApiOllama(): { host: string } {
+export function GetCohereApi(): { key: string } {
   return {
-    host: getConfig().apiOllamaHost,
+    key: getConfig().cohereApiKey,
   };
 }
 
-export function GetApiLangSmith(): { host: string; key: string; projectName: string } {
+export function GetGroqApi(): { key: string } {
   return {
-    host: "https://api.smith.langchain.com",
-    key: getConfig().apiLangSmithKey,
-    projectName: "raycast_jose",
+    key: getConfig().groqApiKey,
   };
 }
 
-export function GetApiLunary(): { key: string } {
+export function GetOllamaApi(): { url: string } {
   return {
-    key: getConfig().apiLunaryKey,
+    url: getConfig().ollamaApiUrl,
   };
 }
 
-export function GetApiLangFuse(): { host: string; public: string; secret: string } {
+export function GetOpenaiApi(): { key: string } {
   return {
-    host: "https://cloud.langfuse.com",
-    public: getConfig().apiLangFusePublicKey,
-    secret: getConfig().apiLangFuseSecretKey,
+    key: getConfig().openaiApiKey,
   };
 }
+
+export function GetPerplexityApi(): { key: string } {
+  return {
+    key: getConfig().perplexityApiKey,
+  };
+}
+
+//
+
+export function GetLangfuseApi(): { url: string; public: string; secret: string } {
+  return {
+    url: getConfig().langfuseApiUrl,
+    public: getConfig().lanfusePublicApiKey,
+    secret: getConfig().langfuseSecretApiKey,
+  };
+}
+
+export function GetLunaryApi(): { key: string } {
+  return {
+    key: getConfig().lunaryApiKey,
+  };
+}
+
+//
 
 export function GetApiEndpoint(): { host: string } {
   return {
