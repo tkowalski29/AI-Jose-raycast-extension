@@ -1,10 +1,10 @@
-import Langfuse, { LangfuseTraceClient } from 'langfuse';
-import { IChat } from '../type';
-import { ITrace, ITraceHelper, newTraceHelper } from './type';
+import Langfuse, { LangfuseTraceClient } from "langfuse";
+import { ITalk } from "../type";
+import { ITraceHelper, newTraceHelper } from "./type";
 
-export const TRACE_LANGFUSE = "langfuse"
+export const TRACE_LANGFUSE = "langfuse";
 
-export class LangFuseTrace implements ITrace {
+export class LangFuseTrace {
   protected keySecret: string;
   protected keyPublic: string;
   protected host: string;
@@ -14,19 +14,19 @@ export class LangFuseTrace implements ITrace {
 
   constructor(keySecret: string | undefined, keyPublic: string | undefined, host: string | undefined) {
     if (!keySecret) {
-      throw new Error('KEY SECRET is not defined');
+      throw new Error("KEY SECRET is not defined");
     }
     if (!keyPublic) {
-      throw new Error('KEY PUBLIC is not defined');
+      throw new Error("KEY PUBLIC is not defined");
     }
     if (!host) {
-      throw new Error('HOST is not defined');
+      throw new Error("HOST is not defined");
     }
 
-    this.keySecret = keySecret
-    this.keyPublic = keyPublic
-    this.host = host
-    this.#initialize()
+    this.keySecret = keySecret;
+    this.keyPublic = keyPublic;
+    this.host = host;
+    this.#initialize();
   }
 
   #initialize() {
@@ -40,57 +40,57 @@ export class LangFuseTrace implements ITrace {
   }
 
   changeHelper(data: ITraceHelper) {
-    this.traceHelperObject = data
+    this.traceHelperObject = data;
   }
 
-  init(chatData: IChat, tags: string[]) {
-    if (!this.trace) throw new Error('TRACE is not initialized');
+  init(chatData: ITalk, tags: string[]) {
+    if (!this.trace) throw new Error("TRACE is not initialized");
 
-    let obj = {
+    const obj = {
       id: chatData.id,
-      name: chatData.model,
+      name: chatData.llm.model,
       userId: chatData.user.id,
-      input: chatData.messages.history,
+      input: chatData.conversation.history,
       metadata: {
-        incoming: chatData
-      }
-    }
+        incoming: chatData,
+      },
+    };
     if (tags !== undefined) {
-      // @ts-expect-error
-      obj.tags = tags
+      // @ts-expect-error ignore
+      obj.tags = tags;
     }
 
-    this.traceObject = this.trace.trace(obj)
+    this.traceObject = this.trace.trace(obj);
   }
 
-  llmStart(chatData: IChat) {
-    if (!this.traceObject) throw new Error('TRACE is not initialized');
+  llmStart(chatData: ITalk) {
+    if (!this.traceObject) throw new Error("TRACE is not initialized");
 
     this.traceObject = this.traceObject.generation({
       // input: openAiMessages,
-      model: chatData.model,
+      model: chatData.llm.model,
       // modelParameters: {
       //   temperature: 0.7,
       // },
       completionStartTime: new Date(),
-    })
+    });
   }
 
   llmFinish() {
-    if (!this.traceObject) throw new Error('TRACE is not initialized');
+    if (!this.traceObject) throw new Error("TRACE is not initialized");
 
     this.traceObject = this.traceObject.generation({
       output: this.traceHelperObject.output,
       usage: {
         promptTokens: this.traceHelperObject.token.prompt,
         completionTokens: this.traceHelperObject.token.completion,
-      }
-    })
+      },
+    });
   }
 
   end() {
-    if (!this.trace) throw new Error('TRACE is not initialized');
+    if (!this.trace) throw new Error("TRACE is not initialized");
 
-    this.trace.shutdownAsync()
+    this.trace.shutdownAsync();
   }
 }

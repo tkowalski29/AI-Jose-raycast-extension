@@ -1,9 +1,11 @@
 import { ITrace } from "../trace/type";
-import { IChat } from "../type";
+import { ITalk, ITalkDataResult } from "../type";
 
 export class ILlm {
-  // @ts-expect-error
-  async chat(chatData: IChat): Promise<any>;
-  // @ts-expect-error
-  prepareResponse(stream: boolean, trace: ITrace, answer: any): any
+  // @ts-expect-error ignore
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async chat(chatData: ITalk): Promise<any>;
+  // @ts-expect-error ignore
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  prepareResponse(stream: boolean, trace: ITrace, answer: any): ITalkDataResult;
 }

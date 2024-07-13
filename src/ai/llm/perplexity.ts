@@ -1,11 +1,11 @@
-import { OpenAI } from 'openai';
-import { ChatCompletion, ChatCompletionChunk, ChatCompletionMessageParam } from 'openai/resources/index.mjs';
-import { Stream } from 'openai/streaming.mjs';
+import { OpenAI } from "openai";
+import { Stream } from "openai/streaming";
+import { ChatCompletion, ChatCompletionChunk, ChatCompletionMessageParam } from "openai/resources";
 import { ITrace } from "../trace/type";
 import { ILlm } from "./type";
-import { EMessage_role, IChat, IMessage } from "../type";
+import { EMessage_role, ITalk, ITalkDataResult, ITalkHistory, ITalkQuestion, newTalkDataResult } from "../type";
 
-export const LLM_PERPLEXITY = "perplexity"
+export const LLM_PERPLEXITY = "perplexity";
 
 export class PerplexityLLM implements ILlm {
   protected key: string;
@@ -14,84 +14,90 @@ export class PerplexityLLM implements ILlm {
 
   constructor(key: string | undefined) {
     if (!key) {
-      throw new Error('KEY is not defined');
+      throw new Error("KEY is not defined");
     }
 
-    this.key = key
-    this.#initialize()
+    this.key = key;
+    this.#initialize();
   }
 
   #initialize() {
     if (this.llm === undefined) {
-      this.llm = new OpenAI({ 
-        baseURL: 'https://api.perplexity.ai/',
-        apiKey: this.key 
-      })
+      this.llm = new OpenAI({
+        baseURL: "https://api.perplexity.ai/",
+        apiKey: this.key,
+      });
     }
   }
 
-  async chat(chatData: IChat): Promise<{ stream: boolean, data: Stream<ChatCompletionChunk> | ChatCompletion }> {
-    if (!this.llm) throw new Error('LLM is not initialized');
-    
+  async chat(chatData: ITalk): Promise<{ stream: boolean; data: Stream<ChatCompletionChunk> | ChatCompletion }> {
+    if (!this.llm) throw new Error("LLM is not initialized");
+
     try {
       const answer = await this.llm.chat.completions.create({
-        model: chatData.model || this.defaultModel,
-        messages: this.#prepareMessage(chatData.messages.prompt, chatData.messages.history, chatData.messages.message),
-        stream: chatData.stream,
-    });
+        model: chatData.llm.model || this.defaultModel,
+        messages: this.#prepareMessage(
+          chatData.conversation.system,
+          chatData.conversation.history,
+          chatData.conversation.question
+        ),
+        stream: chatData.llm.stream,
+      });
 
       return {
-        stream: chatData.stream,
-        data: answer
-      }
+        stream: chatData.llm.stream,
+        data: answer,
+      };
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
 
-  prepareResponse(stream: boolean, trace: ITrace, answer: any): any {
-    let actualTrace = trace.changeHelper(undefined)
-    let response = {
-      createdAt: new Date().toISOString(),
-      message: { content: "" },
-      data: answer,
-      trace: trace,
-      done: false
-    };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  prepareResponse(stream: boolean, trace: ITrace, answer: any): ITalkDataResult {
+    let actualTrace = trace.changeHelper(undefined);
+    const response: ITalkDataResult = newTalkDataResult();
 
     if (!stream) {
-      response.message = { content: answer.choices[0].message }
-      response.done = true;
+      response.content = answer.choices[0].message.content;
+      response.finish = true;
 
       trace.changeHelper({
         output: answer.choices[0].message,
         token: {
           prompt: answer.usage.prompt_tokens || 0,
-          completion: answer.usage.completion_tokens || 0
-        }
-      })
+          completion: answer.usage.completion_tokens || 0,
+        },
+      });
     } else {
-      response.message = { content: answer.choices[0]?.delta?.content || '' }
+      response.content = answer.choices[0]?.delta?.content || "";
 
-      if (answer.choices[0]?.finish_reason === 'stop') {
-        response.done = true
+      if (answer.choices[0]?.finish_reason === "stop") {
+        response.finish = true;
       }
-      actualTrace = trace.changeHelper(undefined)
+      actualTrace = trace.changeHelper(undefined);
       trace.changeHelper({
-        output: actualTrace.output + (answer.choices[0]?.delta?.content || ''),
-      })
+        output: actualTrace.output + (answer.choices[0]?.delta?.content || ""),
+      });
     }
 
-    return response
+    return response;
   }
 
-  #prepareMessage(systemMessage: string, msgs: IMessage[], lastMessage: string): ChatCompletionMessageParam[] {
+  #prepareMessage(
+    systemMessage: string | undefined,
+    msgs: ITalkHistory[],
+    lastMessage: ITalkQuestion | undefined
+  ): ChatCompletionMessageParam[] {
     const result: ChatCompletionMessageParam[] = [];
 
-    result.push({
-      role: "system",
-      content: systemMessage,
-    });
+    if (systemMessage) {
+      result.push({
+        role: "system",
+        content: systemMessage,
+      });
+    }
 
     for (const msg of msgs) {
       switch (msg.role) {
@@ -114,15 +120,17 @@ export class PerplexityLLM implements ILlm {
           });
           break;
         case EMessage_role.FUNCTION || EMessage_role.TOOL:
-          continue
+          continue;
           break;
       }
     }
 
-    result.push({
-      role: "user",
-      content: lastMessage,
-    });
+    if (lastMessage) {
+      result.push({
+        role: "user",
+        content: lastMessage.content,
+      });
+    }
 
     return result;
   }

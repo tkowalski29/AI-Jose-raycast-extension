@@ -1,10 +1,13 @@
 import { Ollama, Message, ChatResponse } from "ollama";
 import { AbortableAsyncIterator } from "ollama/src/utils.js";
+import { EMessage_role, ITalk, ITalkDataResult, ITalkHistory, ITalkQuestion, newTalkDataResult } from "../type";
 import { ITrace } from "../trace/type";
 import { ILlm } from "./type";
-import { EMessage_role, IChat, IMessage } from "../type";
+import fetch from "node-fetch";
+// @ts-expect-error ignore
+globalThis.fetch = fetch;
 
-export const LLM_OLLAMA = "ollama"
+export const LLM_OLLAMA = "ollama";
 
 export class OllamaLLM implements ILlm {
   protected host: string;
@@ -13,88 +16,94 @@ export class OllamaLLM implements ILlm {
 
   constructor(host: string | undefined) {
     if (!host) {
-      throw new Error('HOST is not defined');
+      throw new Error("HOST is not defined");
     }
 
-    this.host = host
-    this.#initialize()
+    this.host = host;
+    this.#initialize();
   }
 
   #initialize() {
     if (this.llm === undefined) {
-      this.llm = new Ollama({ host: this.host })
+      this.llm = new Ollama({ host: this.host });
     }
   }
 
-  async chat(chatData: IChat): Promise<{ stream: boolean, data: AbortableAsyncIterator<ChatResponse> | ChatResponse }> {
-    if (!this.llm) throw new Error('LLM is not initialized');
-    
+  async chat(chatData: ITalk): Promise<{ stream: boolean; data: AbortableAsyncIterator<ChatResponse> | ChatResponse }> {
+    if (!this.llm) throw new Error("LLM is not initialized");
+
     try {
       const answer = await this.llm.chat({
-        // @ts-expect-error
-        stream: chatData.stream,
-        model: chatData.model || this.defaultModel,
-        messages: this.#prepareMessage(chatData.messages.prompt, chatData.messages.history, chatData.messages.message),
+        // @ts-expect-error ignore
+        stream: chatData.llm.stream,
+        model: chatData.llm.model || this.defaultModel,
+        messages: this.#prepareMessage(
+          chatData.conversation.system,
+          chatData.conversation.history,
+          chatData.conversation.question
+        ),
       });
 
       return {
-        stream: chatData.stream,
-        data: answer
-      }
+        stream: chatData.llm.stream,
+        data: answer,
+      };
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
 
-  prepareResponse(stream: boolean, trace: ITrace, answer: any): any {
-    let actualTrace = trace.changeHelper(undefined)
-    let response = {
-      createdAt: new Date().toISOString(),
-      message: { content: "" },
-      data: answer,
-      trace: trace,
-      done: false
-    };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  prepareResponse(stream: boolean, trace: ITrace, answer: any): ITalkDataResult {
+    let actualTrace = trace.changeHelper(undefined);
+    const response: ITalkDataResult = newTalkDataResult();
 
     if (!stream) {
-      response.message = { content: answer.message.content }
-      response.done = true;
+      response.content = answer.message.content;
+      response.finish = true;
 
       trace.changeHelper({
         output: answer.message.content,
         token: {
           prompt: answer.prompt_eval_count || 0,
-          completion: answer.eval_count || 0
-        }
-      })
+          completion: answer.eval_count || 0,
+        },
+      });
     } else {
-      response.message = { content: answer.message.content || '' }
+      response.content = answer.message.content;
 
       if (answer.done) {
-        response.done = true
+        response.finish = true;
         trace.changeHelper({
           token: {
             prompt: answer.eval_count || 0,
-            completion: answer.prompt_eval_count || 0
-          }
-        })
+            completion: answer.prompt_eval_count || 0,
+          },
+        });
       }
-      actualTrace = trace.changeHelper(undefined)
+      actualTrace = trace.changeHelper(undefined);
       trace.changeHelper({
-        output: actualTrace.output + (answer.message.content || ''),
-      })
+        output: actualTrace.output + (answer.message.content || ""),
+      });
     }
 
-    return response
+    return response;
   }
 
-  #prepareMessage(systemMessage: string, msgs: IMessage[], lastMessage: string): Message[] {
+  #prepareMessage(
+    systemMessage: string | undefined,
+    msgs: ITalkHistory[],
+    lastMessage: ITalkQuestion | undefined
+  ): Message[] {
     const result: Message[] = [];
 
-    result.push({
-      role: "system",
-      content: systemMessage,
-    });
+    if (systemMessage) {
+      result.push({
+        role: "system",
+        content: systemMessage,
+      });
+    }
 
     for (const msg of msgs) {
       switch (msg.role) {
@@ -117,15 +126,17 @@ export class OllamaLLM implements ILlm {
           });
           break;
         case EMessage_role.FUNCTION || EMessage_role.TOOL:
-          continue
+          continue;
           break;
       }
     }
 
-    result.push({
-      role: "user",
-      content: lastMessage,
-    });
+    if (lastMessage) {
+      result.push({
+        role: "user",
+        content: lastMessage.content,
+      });
+    }
 
     return result;
   }

@@ -1,11 +1,11 @@
 import { CohereClient } from "cohere-ai";
+import { Stream } from "cohere-ai/core";
 import { Message, NonStreamedChatResponse, StreamedChatResponse } from "cohere-ai/api";
 import { ITrace } from "../trace/type";
 import { ILlm } from "./type";
-import { EMessage_role, IChat, IMessage } from "../type";
-import { Stream } from "cohere-ai/core";
+import { EMessage_role, ITalk, ITalkDataResult, ITalkHistory, ITalkQuestion, newTalkDataResult } from "../type";
 
-export const LLM_COHERE = "cohere"
+export const LLM_COHERE = "cohere";
 
 export class CohereLLM implements ILlm {
   protected key: string;
@@ -14,99 +14,104 @@ export class CohereLLM implements ILlm {
 
   constructor(key: string | undefined) {
     if (!key) {
-      throw new Error('KEY is not defined');
+      throw new Error("KEY is not defined");
     }
 
-    this.key = key
-    this.#initialize()
+    this.key = key;
+    this.#initialize();
   }
 
   #initialize() {
     if (this.llm === undefined) {
-      this.llm = new CohereClient({ token: this.key })
+      this.llm = new CohereClient({ token: this.key });
     }
   }
 
-  async chat(chatData: IChat): Promise<{ stream: boolean, data: Stream<StreamedChatResponse> | NonStreamedChatResponse }> {
-    if (!this.llm) throw new Error('LLM is not initialized');
-    
+  async chat(
+    chatData: ITalk
+  ): Promise<{ stream: boolean; data: Stream<StreamedChatResponse> | NonStreamedChatResponse }> {
+    if (!this.llm) throw new Error("LLM is not initialized");
+
     try {
-      if (!chatData.stream) {
+      if (!chatData.llm.stream) {
         const answer = await this.llm.chat({
-          model: chatData.model || this.defaultModel,
-          chatHistory: this.#prepareMessage("", chatData.messages.history, ""),
-          preamble: chatData.messages.prompt,
-          message: chatData.messages.message,
+          model: chatData.llm.model || this.defaultModel,
+          chatHistory: this.#prepareMessage(undefined, chatData.conversation.history, undefined),
+          preamble: chatData.conversation.system,
+          message: chatData.conversation.question.content,
         });
 
         return {
-          stream: chatData.stream,
-          data: answer
-        }
+          stream: chatData.llm.stream,
+          data: answer,
+        };
       } else {
         const answer = await this.llm.chatStream({
-          model: chatData.model || this.defaultModel,
-          chatHistory: this.#prepareMessage("", chatData.messages.history, ""),
-          preamble: chatData.messages.prompt,
-          message: chatData.messages.message,
+          model: chatData.llm.model || this.defaultModel,
+          chatHistory: this.#prepareMessage(undefined, chatData.conversation.history, undefined),
+          preamble: chatData.conversation.system,
+          message: chatData.conversation.question.content,
         });
 
         return {
-          stream: chatData.stream,
-          data: answer
-        }
+          stream: chatData.llm.stream,
+          data: answer,
+        };
       }
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
 
-  prepareResponse(stream: boolean, trace: ITrace, answer: any): any {
-    let response = {
-      createdAt: new Date().toISOString(),
-      message: { content: "" },
-      data: answer,
-      done: false
-    };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  prepareResponse(stream: boolean, trace: ITrace, answer: any): ITalkDataResult {
+    const response: ITalkDataResult = newTalkDataResult();
 
     if (!stream) {
-      response.message = { content: answer.text }
-      response.done = true;
+      response.content = answer.text;
+      response.finish = true;
 
       trace.changeHelper({
         output: answer.text,
         token: {
           prompt: answer.meta?.tokens?.inputTokens || 0,
-          completion: answer.meta?.tokens?.outputTokens || 0
-        }
-      })
+          completion: answer.meta?.tokens?.outputTokens || 0,
+        },
+      });
     } else {
       switch (answer.eventType) {
         case "stream-start":
           break;
         case "text-generation":
-          response.message.content = answer.text;
-          response.done = answer.is_finished;
+          response.content = answer.text;
+          response.finish = answer.is_finished;
           break;
         case "stream-end":
-          response.message.content = answer.response.text;
-          response.done = answer.is_finished;
+          response.content = answer.response.text;
+          response.finish = answer.is_finished;
 
           trace.changeHelper({
             output: answer.response.text,
             token: {
               prompt: answer.response.meta?.tokens?.inputTokens || 0,
-              completion: answer.response.meta?.tokens?.outputTokens || 0
-            }
-          })
+              completion: answer.response.meta?.tokens?.outputTokens || 0,
+            },
+          });
           break;
       }
     }
 
-    return response
+    return response;
   }
 
-  #prepareMessage(systemMessage: string, msgs: IMessage[], lastMessage: string): Message[] {
+  #prepareMessage(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    systemMessage: string | undefined,
+    msgs: ITalkHistory[],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    lastMessage: ITalkQuestion | undefined
+  ): Message[] {
     const result: Message[] = [];
 
     for (const msg of msgs) {
@@ -130,7 +135,7 @@ export class CohereLLM implements ILlm {
           });
           break;
         case EMessage_role.FUNCTION || EMessage_role.TOOL:
-          continue
+          continue;
           break;
       }
     }
