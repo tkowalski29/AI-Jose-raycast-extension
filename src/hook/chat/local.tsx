@@ -68,7 +68,7 @@ export async function RunLocal(
     }
 
     if (llm === undefined) {
-      console.error("Unknown llm:", chatData.llm.llm);
+      throw new Error("Unknown llm: " + chatData.llm.llm);
       return;
     }
 
@@ -122,7 +122,7 @@ export async function RunLocal(
 
           interaction.toast.title = "Got your answer!";
           interaction.toast.style = Toast.Style.Success;
-          return;
+          return chatData;
         }
         if (chatData.result === undefined) {
           chatData.result = newTalkDataResult();
@@ -135,8 +135,7 @@ export async function RunLocal(
 
     trace.finish();
     return chatData;
-  } catch (error) {
-    console.error("Error processing request:", error);
-    return undefined;
+  } catch (error: any) {
+    throw error
   }
 }

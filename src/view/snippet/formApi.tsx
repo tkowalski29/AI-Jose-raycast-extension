@@ -3,14 +3,13 @@ import { useForm, FormValidation } from "@raycast/utils";
 import { v4 as uuidv4 } from "uuid";
 import { SnippetHookType } from "../../type/snippet";
 import {
-  ConfigurationModelCollection,
   ConfigurationModelDefault,
   ConfigurationTypeCommunication,
   ConfigurationTypeCommunicationDefault,
 } from "../../type/config";
 import { ITalkSnippet, SnippetDefaultTemperature } from "../../ai/type";
 
-export const SnippetForm = (props: { snippet?: ITalkSnippet; use: { snippets: SnippetHookType }; name?: string }) => {
+export const SnippetFormApi = (props: { snippet?: ITalkSnippet; use: { snippets: SnippetHookType }; name?: string }) => {
   const { use, snippet } = props;
   const { pop } = useNavigation();
 
@@ -56,6 +55,15 @@ export const SnippetForm = (props: { snippet?: ITalkSnippet; use: { snippets: Sn
         </ActionPanel>
       }
     >
+      <Form.Dropdown
+        title="Type communication"
+        placeholder="Type communication snippet"
+        {...itemProps.typeCommunication}
+      >
+        {Object.entries(ConfigurationTypeCommunication).map(([, value]) => (
+          <Form.Dropdown.Item value={value.key} key={value.key} title={value.title} />
+        ))}
+      </Form.Dropdown>
       <Form.Dropdown title="Temperature" placeholder="Temperature model" {...itemProps.modelTemperature}>
         {Array.from({ length: 10 }, (_, index) => (
           <Form.Dropdown.Item
@@ -66,27 +74,6 @@ export const SnippetForm = (props: { snippet?: ITalkSnippet; use: { snippets: Sn
         ))}
       </Form.Dropdown>
       <Form.TextField title="Webhook" placeholder="Url to send response" {...itemProps.webhookUrl} />
-      <Form.Dropdown
-        title="Type communication"
-        placeholder="Type communication snippet"
-        {...itemProps.typeCommunication}
-      >
-        {Object.entries(ConfigurationTypeCommunication).map(([, value]) => (
-          <Form.Dropdown.Item value={value.key} key={value.key} title={value.title} />
-        ))}
-      </Form.Dropdown>
-      <Form.Separator />
-      <Form.TextField title="Title" placeholder="Title your snippet" {...itemProps.title} />
-      <Form.TextField title="Category" placeholder="Category your snippet" {...itemProps.category} />
-      <Form.TextField title="Emoji" placeholder="Emoji your snippet" {...itemProps.emoji} />
-
-      <Form.Dropdown title="Model" placeholder="Choose model" {...itemProps.model}>
-        {Object.entries(ConfigurationModelCollection).map(([, value]) => (
-          <Form.Dropdown.Item value={value.key} key={value.key} title={value.title} />
-        ))}
-      </Form.Dropdown>
-
-      <Form.TextArea title="Prompt" placeholder="Prompt your snippet" {...itemProps.promptSystem} />
     </Form>
   );
 };
