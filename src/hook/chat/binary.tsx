@@ -23,11 +23,12 @@ export async function RunBinnary(
   }
   const b64 = Buffer.from(JSON.stringify(newChat)).toString("base64");
 
+  // eslint-disable-next-line no-useless-catch
   try {
     const { stdout, stderr } = await exec(`chmod +x ${GetApiBinnary().path}; .${GetApiBinnary().path} '${b64}'`);
 
     if (stderr !== "") {
-      throw stderr
+      throw stderr;
     }
 
     const out: ITalk = JSON.parse(stdout);
@@ -51,6 +52,6 @@ export async function RunBinnary(
 
     return chat;
   } catch (error) {
-    throw error
+    throw error;
   }
 }

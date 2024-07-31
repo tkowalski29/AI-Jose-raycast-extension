@@ -10,7 +10,11 @@ import {
 } from "../../type/config";
 import { ITalkSnippet, SnippetDefaultTemperature } from "../../ai/type";
 
-export const SnippetFormLocal = (props: { snippet?: ITalkSnippet; use: { snippets: SnippetHookType }; name?: string }) => {
+export const SnippetFormLocal = (props: {
+  snippet?: ITalkSnippet;
+  use: { snippets: SnippetHookType };
+  name?: string;
+}) => {
   const { use, snippet } = props;
   const { pop } = useNavigation();
 
@@ -93,7 +97,7 @@ export const SnippetFormLocal = (props: { snippet?: ITalkSnippet; use: { snippet
           />
         ))}
       </Form.Dropdown>
-      
+
       <Form.TextField title="Webhook" placeholder="Url to send response" {...itemProps.webhookUrl} />
     </Form>
   );

@@ -38,6 +38,7 @@ export async function RunLocal(
     lunaryTrace = new LunaryTrace(GetLunaryApi().key);
   }
 
+  // eslint-disable-next-line no-useless-catch
   try {
     const trace = new Trace();
     trace.init(langFuseTrace, lunaryTrace);
@@ -135,7 +136,8 @@ export async function RunLocal(
 
     trace.finish();
     return chatData;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    throw error
+    throw error;
   }
 }

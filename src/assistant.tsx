@@ -62,20 +62,19 @@ export default function Assistant() {
           shortcut={{ modifiers: ["cmd"], key: "e" }}
           icon={Icon.Pencil}
           onAction={() =>
-            assistant.isLocal ? 
-              push(
-                <AssistantFormLocal
-                  assistant={assistant}
-                  use={{ assistants: collectionsAssistants, snippets: collectionsSnippet.data }}
-                />
-              )
-            :
-              push(
-                <AssistantFormApi
-                  assistant={assistant}
-                  use={{ assistants: collectionsAssistants, snippets: collectionsSnippet.data }}
-                />
-              )
+            assistant.isLocal
+              ? push(
+                  <AssistantFormLocal
+                    assistant={assistant}
+                    use={{ assistants: collectionsAssistants, snippets: collectionsSnippet.data }}
+                  />
+                )
+              : push(
+                  <AssistantFormApi
+                    assistant={assistant}
+                    use={{ assistants: collectionsAssistants, snippets: collectionsSnippet.data }}
+                  />
+                )
           }
         />
         <Action

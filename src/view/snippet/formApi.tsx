@@ -9,7 +9,11 @@ import {
 } from "../../type/config";
 import { ITalkSnippet, SnippetDefaultTemperature } from "../../ai/type";
 
-export const SnippetFormApi = (props: { snippet?: ITalkSnippet; use: { snippets: SnippetHookType }; name?: string }) => {
+export const SnippetFormApi = (props: {
+  snippet?: ITalkSnippet;
+  use: { snippets: SnippetHookType };
+  name?: string;
+}) => {
   const { use, snippet } = props;
   const { pop } = useNavigation();
 

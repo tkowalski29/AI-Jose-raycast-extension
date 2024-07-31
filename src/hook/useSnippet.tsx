@@ -2,13 +2,7 @@ import { LocalStorage, showToast, Toast } from "@raycast/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import fetch from "node-fetch";
 import { SnippetDefault, SnippetHookType } from "../type/snippet";
-import {
-  ClearPromptSystem,
-  ConfigurationTypeCommunicationDefault,
-  GetApiEndpointData,
-  GetDevice,
-  GetUserName,
-} from "../type/config";
+import { ClearPromptSystem, ConfigurationTypeCommunicationDefault, GetApiEndpointData } from "../type/config";
 import { ITalkSnippet, SnippetDefaultTemperature } from "../ai/type";
 
 export function useSnippet(): SnippetHookType {

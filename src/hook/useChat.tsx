@@ -89,6 +89,7 @@ export function useChat(): ChatHookType {
         conversation.selectedType = ConversationSelectedTypeAssistant;
         await conversations.update(conversation);
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.title = error.toString();
       toast.style = Toast.Style.Failure;

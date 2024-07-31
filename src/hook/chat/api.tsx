@@ -57,7 +57,7 @@ export async function RunCustomApi(
         return chatData;
       })
       .catch((error) => {
-        throw error
+        throw error;
       });
   } else {
     return await fetch(GetApiEndpoint().host, {
@@ -107,7 +107,7 @@ export async function RunCustomApi(
         return chatData;
       })
       .catch((error) => {
-        throw error
+        throw error;
       });
   }
 }

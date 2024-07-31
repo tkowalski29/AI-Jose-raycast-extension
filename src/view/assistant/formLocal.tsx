@@ -70,15 +70,15 @@ export const AssistantFormLocal = (props: {
         <Form.TextArea title="Prompt System" placeholder="PromptSystem your assistant" {...itemProps.promptSystem} />
         <Form.TextField title="Avatar" placeholder="Avatar your assistant" {...itemProps.avatar} />
         <Form.Dropdown title="Emoji" {...itemProps.emoji}>
-        {Object.keys(Icon).map((iconName, index) => (
-          <Form.Dropdown.Item
-            title={iconName}
-            value={Object.values(Icon)[index]}
-            key={iconName}
-            icon={Object.values(Icon)[index]}
-          />
-        ))}
-      </Form.Dropdown>
+          {Object.keys(Icon).map((iconName, index) => (
+            <Form.Dropdown.Item
+              title={iconName}
+              value={Object.values(Icon)[index]}
+              key={iconName}
+              icon={Object.values(Icon)[index]}
+            />
+          ))}
+        </Form.Dropdown>
 
         <Form.Dropdown
           title="Type communication"

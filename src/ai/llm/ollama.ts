@@ -28,6 +28,7 @@ export class OllamaLLM implements ILlm {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async chat(chatData: ITalk): Promise<{ stream: boolean; data: any | ChatResponse }> {
     if (!this.llm) throw new Error("Ollama LLM is not initialized");
 

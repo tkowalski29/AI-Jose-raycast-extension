@@ -47,14 +47,9 @@ export default function Snippet() {
           shortcut={{ modifiers: ["cmd"], key: "e" }}
           icon={Icon.Pencil}
           onAction={() =>
-            snippet.isLocal ? 
-              push(
-                <SnippetFormLocal snippet={snippet} use={{ snippets: collectionsSnipppets }} />
-              )
-            :
-              push(
-                <SnippetFormApi snippet={snippet} use={{ snippets: collectionsSnipppets }} />
-              )
+            snippet.isLocal
+              ? push(<SnippetFormLocal snippet={snippet} use={{ snippets: collectionsSnipppets }} />)
+              : push(<SnippetFormApi snippet={snippet} use={{ snippets: collectionsSnipppets }} />)
           }
         />
         <Action
