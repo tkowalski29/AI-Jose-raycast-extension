@@ -1,5 +1,5 @@
 import { List } from "@raycast/api";
-import { ITalk } from "../../ai/type";
+import { ITalk } from "../../data/talk";
 
 export const AnswerDetailView = (props: { chat: ITalk; streamData?: ITalk | undefined }) => {
   const { chat, streamData } = props;
@@ -9,7 +9,7 @@ export const AnswerDetailView = (props: { chat: ITalk; streamData?: ITalk | unde
 
   markdown += `${isStreaming ? streamData.result?.content : chat.result ? chat.result?.content : "..."}\n\n`;
   if (chat.result?.image && chat.result.image.exist) {
-    markdown += `![](${chat.result.image.url[0]})\n\n`;
+    markdown += `![](${chat.result.image.url ? chat.result.image.url[0] : ""})\n\n`;
   }
   markdown += `---\n\n`;
   markdown += `**Question:**\n\n`;

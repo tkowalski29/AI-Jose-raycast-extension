@@ -1,7 +1,7 @@
 import { Toast } from "@raycast/api";
 import fetch from "node-fetch";
-import { GetApiEndpoint } from "../../type/config";
-import { initData, ITalk, ITalkDataResult, ITalkQuestionFile, newTalkDataResult } from "../../ai/type";
+import { initData, ITalk, ITalkDataResult, ITalkQuestionFile, newTalkDataResult } from "../../data/talk";
+import { ConfigApiEndpoint } from "../../helper/config";
 
 export async function RunCustomApi(
   chatData: ITalk,
@@ -23,7 +23,7 @@ export async function RunCustomApi(
   }
 
   if (!chatData.llm.stream) {
-    return await fetch(GetApiEndpoint().host, {
+    return await fetch(ConfigApiEndpoint().host, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -60,7 +60,7 @@ export async function RunCustomApi(
         throw error;
       });
   } else {
-    return await fetch(GetApiEndpoint().host, {
+    return await fetch(ConfigApiEndpoint().host, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

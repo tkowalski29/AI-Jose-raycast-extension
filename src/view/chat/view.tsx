@@ -1,11 +1,13 @@
 import { Action, ActionPanel, Alert, confirmAlert, clearSearchBar, Icon, List, useNavigation } from "@raycast/api";
-import { ChatViewPropsType } from "../../type/chat";
 import { AnswerDetailView } from "./detail";
 import { EmptyView } from "../empty";
 import { ChatFullForm } from "./form";
 import say from "say";
-import { GetNewConversation } from "../../type/conversation";
-import { ITalk } from "../../ai/type";
+import { ITalk } from "../../data/talk";
+import { IConversation, NewConversation } from "../../data/conversation";
+import { IAssistant } from "../../data/assistant";
+import { HookConversation, HookTalk } from "../../hook/type";
+import { GetDevice, GetUserName } from "../../helper/const";
 
 export const ChatView = ({
   data,
@@ -14,7 +16,14 @@ export const ChatView = ({
   setConversation,
   use,
   selectedAssistant,
-}: ChatViewPropsType) => {
+}: {
+  data: ITalk[];
+  question: string;
+  conversation: IConversation;
+  setConversation: React.Dispatch<React.SetStateAction<IConversation>>;
+  use: { chats: HookTalk; conversations: HookConversation };
+  selectedAssistant: IAssistant;
+}) => {
   const { push } = useNavigation();
   const sortedChats = data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
@@ -82,7 +91,7 @@ export const ChatView = ({
                 title: "Start New",
                 style: Alert.ActionStyle.Destructive,
                 onAction: () => {
-                  setConversation(GetNewConversation(selectedAssistant, true));
+                  setConversation(NewConversation(selectedAssistant, true, GetUserName(), GetDevice()));
                   use.chats.clear();
                   clearSearchBar();
                   use.chats.setLoading(false);

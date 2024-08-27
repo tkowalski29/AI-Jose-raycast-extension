@@ -1,13 +1,16 @@
 import { LocalStorage, showToast, Toast } from "@raycast/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import fetch from "node-fetch";
-import { AssistantDefault, AssistantHookType } from "../type/assistant";
-import { ClearPromptSystem, ConfigurationTypeCommunicationDefault, GetApiEndpointData } from "../type/config";
-import { AssistantDefaultTemperature, ITalkAssistant } from "../ai/type";
+import { AssistantDefaultTemperature, IAssistant } from "../data/assistant";
 import { RemoveDuplicatesByField } from "../common/list";
+import { HookAssistant } from "./type";
+import { DefaultAssistant } from "./default/assistant";
+import { ConfigApiEndpointData } from "../helper/config";
+import { ClearPromptSystem } from "../common/clear";
+import { ConfigurationTypeCommunicationDefault } from "../helper/communication";
 
-export function useAssistant(): AssistantHookType {
-  const [data, setData] = useState<ITalkAssistant[]>([]);
+export function useAssistant(): HookAssistant {
+  const [data, setData] = useState<IAssistant[]>([]);
   const [isLoading, setLoading] = useState<boolean>(true);
 
   const localStorageName = "assistants";
@@ -18,10 +21,10 @@ export function useAssistant(): AssistantHookType {
       if (stored) {
         setData((previous) => RemoveDuplicatesByField([...previous, ...JSON.parse(stored)], "assistantId"));
       } else {
-        if (GetApiEndpointData() !== undefined && GetApiEndpointData().assistant !== undefined) {
+        if (ConfigApiEndpointData() !== undefined && ConfigApiEndpointData().assistant !== undefined) {
           await apiLoad(setData, data);
         } else {
-          setData(AssistantDefault);
+          setData(DefaultAssistant);
         }
       }
 
@@ -36,8 +39,8 @@ export function useAssistant(): AssistantHookType {
   }, [data, isLoading]);
 
   const reload = useCallback(async () => {
-    if (GetApiEndpointData() === undefined || GetApiEndpointData().assistant === undefined) {
-      setData(AssistantDefault);
+    if (ConfigApiEndpointData() === undefined || ConfigApiEndpointData().assistant === undefined) {
+      setData(DefaultAssistant);
       return;
     }
     await apiLoad(setData, data);
@@ -49,9 +52,9 @@ export function useAssistant(): AssistantHookType {
   }, [setData, data]);
 
   const add = useCallback(
-    async (item: ITalkAssistant) => {
+    async (item: IAssistant) => {
       item.isLocal = true;
-      const newData: ITalkAssistant = { ...item };
+      const newData: IAssistant = { ...item };
       setData([...data, newData]);
 
       await showToast({
@@ -65,9 +68,9 @@ export function useAssistant(): AssistantHookType {
   );
 
   const update = useCallback(
-    async (item: ITalkAssistant) => {
+    async (item: IAssistant) => {
       setData((prev) => {
-        return prev.map((v: ITalkAssistant) => {
+        return prev.map((v: IAssistant) => {
           if (v.assistantId === item.assistantId) {
             return item;
           }
@@ -85,7 +88,7 @@ export function useAssistant(): AssistantHookType {
   );
 
   const remove = useCallback(
-    async (item: ITalkAssistant) => {
+    async (item: IAssistant) => {
       if (item.isLocal !== true) {
         await showToast({
           title: "Removing your assistant imposible, assistant is not local",
@@ -95,7 +98,7 @@ export function useAssistant(): AssistantHookType {
         return;
       }
 
-      const newData: ITalkAssistant[] = data.filter((o) => o.assistantId !== item.assistantId);
+      const newData: IAssistant[] = data.filter((o) => o.assistantId !== item.assistantId);
       setData(newData);
 
       await showToast({
@@ -120,17 +123,17 @@ export function useAssistant(): AssistantHookType {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function apiLoad(setData: any, oldData: ITalkAssistant[]) {
-  if (GetApiEndpointData().assistant === "" || GetApiEndpointData().assistant === undefined) {
-    return setData(AssistantDefault);
+async function apiLoad(setData: any, oldData: IAssistant[]) {
+  if (ConfigApiEndpointData().assistant === "" || ConfigApiEndpointData().assistant === undefined) {
+    return setData(DefaultAssistant);
   }
-  await fetch(GetApiEndpointData().assistant)
+  await fetch(ConfigApiEndpointData().assistant)
     .then(async (response) => response.json())
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .then(async (res: any) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const newRes: ITalkAssistant[] = res.map((item: any) => {
-        const existing = oldData.find((x: ITalkAssistant) => x.assistantId === item.assistantId);
+      const newRes: IAssistant[] = res.map((item: any) => {
+        const existing = oldData.find((x: IAssistant) => x.assistantId === item.assistantId);
         return {
           ...item,
           promptSystem: ClearPromptSystem(item.promptSystem),

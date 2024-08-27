@@ -1,16 +1,13 @@
 import { Action, ActionPanel, Form, Icon, useNavigation } from "@raycast/api";
 import { useForm, FormValidation } from "@raycast/utils";
 import { v4 as uuidv4 } from "uuid";
-import {
-  ClearImportModel,
-  ClearImportModelTemperature,
-  ConfigurationModelDefault,
-  ConfigurationTypeCommunicationDefault,
-} from "../../type/config";
-import { SnippetHookType } from "../../type/snippet";
-import { ITalkLlm, ITalkSnippet, SnippetDefaultTemperature } from "../../ai/type";
+import { HookSnippet } from "../../hook/type";
+import { ILlm } from "../../data/llm";
+import { ISnippet, SnippetDefaultTemperature } from "../../data/snippet";
+import { ClearImportModel, ClearImportModelTemperature } from "../../common/llm";
+import { ConfigurationTypeCommunicationDefault } from "../../helper/communication";
 
-export const SnippetImportForm = (props: { use: { snippets: SnippetHookType; llms: ITalkLlm[] } }) => {
+export const SnippetImportForm = (props: { use: { hookSnippet: HookSnippet; llms: ILlm[] } }) => {
   const { use } = props;
   const { pop } = useNavigation();
 
@@ -20,10 +17,10 @@ export const SnippetImportForm = (props: { use: { snippets: SnippetHookType; llm
       JSON.parse(data.json).map((item: any) => {
         let iModel = ClearImportModel(item.model);
         if (!use.llms.some((model) => model.key === iModel)) {
-          iModel = ConfigurationModelDefault;
+          iModel = "openai__gpt-4o-mini";
         }
 
-        const newAssistant: ITalkSnippet = {
+        const newSnippet: ISnippet = {
           snippetId: uuidv4(),
           title: item.title,
           category: "new",
@@ -34,9 +31,13 @@ export const SnippetImportForm = (props: { use: { snippets: SnippetHookType; llm
           webhookUrl: undefined,
           isLocal: false,
           typeCommunication: ConfigurationTypeCommunicationDefault,
+          description: undefined,
+          tag: undefined,
+          schema: undefined,
+          postSchema: undefined,
         };
 
-        use.snippets.add({ ...newAssistant });
+        use.hookSnippet.add({ ...newSnippet });
       });
       pop();
     },

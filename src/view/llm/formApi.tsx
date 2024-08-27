@@ -1,19 +1,18 @@
 import { Action, ActionPanel, Form, Icon, useNavigation } from "@raycast/api";
 import { useForm, FormValidation } from "@raycast/utils";
-import { LlmHookType } from "../../type/llm";
-import { ITalkLlm } from "../../ai/type";
+import { HookLlm } from "../../hook/type";
+import { ILlm } from "../../data/llm";
 
-export const LlmFormApi = (props: { llm?: ITalkLlm; use: { llms: LlmHookType }; name?: string }) => {
+export const LlmFormApi = (props: { llm?: ILlm; use: { llms: HookLlm } }) => {
   const { use, llm } = props;
   const { pop } = useNavigation();
 
-  const { handleSubmit, itemProps } = useForm<ITalkLlm>({
+  const { handleSubmit, itemProps } = useForm<ILlm>({
     onSubmit: async (llm) => {
-      const updatedItem: ITalkLlm = { ...llm };
+      const updatedItem: ILlm = { ...llm };
 
       if (props.llm?.isLocal != true && props.llm !== undefined) {
         updatedItem.key = props.llm.key;
-        updatedItem.url = props.llm.url;
       }
 
       if (props.llm) {
@@ -33,7 +32,6 @@ export const LlmFormApi = (props: { llm?: ITalkLlm; use: { llms: LlmHookType }; 
       model: llm?.model ?? "",
       apiKeyOrUrl: llm?.apiKeyOrUrl ?? "",
       useLocalOrEnv: llm?.useLocalOrEnv ?? "env",
-      url: llm?.url ?? "",
     },
   });
 

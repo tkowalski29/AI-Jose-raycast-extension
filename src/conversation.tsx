@@ -1,49 +1,46 @@
 import { ActionPanel, Icon, List, useNavigation, confirmAlert, Alert, Action } from "@raycast/api";
 import { useEffect, useState } from "react";
-import Chat from "./chat";
 import { useConversations } from "./hook/useConversations";
 import { ConversationListView } from "./view/chat/conversationList";
-import { ConversationType } from "./type/conversation";
-import { ITalk } from "./ai/type";
-import { needOnboarding } from "./type/config";
 import Onboarding from "./onboarding";
 import { useAssistant } from "./hook/useAssistant";
 import { useOnboarding } from "./hook/useOnboarding";
+import { ITalk } from "./data/talk";
+import { IConversation } from "./data/conversation";
+import Talk from "./talk";
+import { NeedOnboarding } from "./helper/onboarding";
 
 export default function Conversation() {
   const { push } = useNavigation();
-  const conversations = useConversations();
-  const collectionsAssistant = useAssistant();
+  const hookConversation = useConversations();
+  const hookAssistant = useAssistant();
   const hookOnboarding = useOnboarding();
   const [searchText, setSearchText] = useState<string>("");
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
-  const [conversation, setConversation] = useState<ConversationType | null>();
+  const [conversation, setConversation] = useState<IConversation | null>();
 
   useEffect(() => {
-    setConversation(conversations.data.find((x: ConversationType) => x.conversationId === selectedConversationId));
+    setConversation(hookConversation.data.find((x: IConversation) => x.conversationId === selectedConversationId));
   }, [selectedConversationId]);
   useEffect(() => {
     if (conversation) {
-      conversations.update(conversation);
+      hookConversation.update(conversation);
     }
   }, [conversation]);
 
-  if (
-    !hookOnboarding.data &&
-    (needOnboarding(collectionsAssistant.data.length) || collectionsAssistant.data.length === 0)
-  ) {
+  if (!hookOnboarding.data && (NeedOnboarding(hookAssistant.data.length) || hookAssistant.data.length === 0)) {
     return <Onboarding />;
   }
 
-  const uniqueConversations = conversations.data.filter(
+  const uniqueConversations = hookConversation.data.filter(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (value: any, index: any, self: any) =>
-      index === self.findIndex((conversation: ConversationType) => conversation.conversationId === value.conversationId)
+      index === self.findIndex((conversation: IConversation) => conversation.conversationId === value.conversationId)
   );
 
   const filteredConversations = searchText
-    ? uniqueConversations.filter((x: ConversationType) =>
-        x.chats.some(
+    ? uniqueConversations.filter((x: IConversation) =>
+        x.messages.some(
           (x: ITalk) =>
             x.conversation.question.content.toLowerCase().includes(searchText.toLocaleLowerCase()) ||
             x.result?.content.toLowerCase().includes(searchText.toLocaleLowerCase())
@@ -52,42 +49,13 @@ export default function Conversation() {
     : uniqueConversations;
 
   const sortedConversations = filteredConversations.sort(
-    (a: ConversationType, b: ConversationType) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    (a: IConversation, b: IConversation) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
-
-  const getActionPanel = (conversation: ConversationType) => (
-    <ActionPanel>
-      <Action title="Conrinue Ask" icon={Icon.ArrowRight} onAction={() => push(<Chat conversation={conversation} />)} />
-      <ActionPanel.Section title="Delete">
-        <Action
-          style={Action.Style.Destructive}
-          icon={Icon.RotateAntiClockwise}
-          title="Remove"
-          onAction={async () => {
-            await confirmAlert({
-              title: "Are you sure you want to remove this conversation?",
-              message: "This action cannot be undone",
-              icon: Icon.RotateAntiClockwise,
-              primaryAction: {
-                title: "Remove",
-                style: Alert.ActionStyle.Destructive,
-                onAction: () => {
-                  conversations.remove(conversation);
-                },
-              },
-            });
-          }}
-        />
-      </ActionPanel.Section>
-    </ActionPanel>
-  );
-  const searchBarPlaceholder = "Search conversation...";
-  const getAction = undefined;
 
   return (
     <List
       isShowingDetail={false}
-      isLoading={conversations.isLoading}
+      isLoading={hookConversation.isLoading}
       filtering={false}
       throttle={false}
       selectedItemId={selectedConversationId || undefined}
@@ -96,12 +64,11 @@ export default function Conversation() {
           setSelectedConversationId(id);
         }
       }}
-      actions={getAction}
-      searchBarPlaceholder={searchBarPlaceholder}
+      searchBarPlaceholder="Search conversation..."
       searchText={searchText}
       onSearchTextChange={setSearchText}
     >
-      {conversations.data.length === 0 ? (
+      {hookConversation.data.length === 0 ? (
         <List.EmptyView
           title="No Conversation"
           description="Your recent conversation will be showed up here"
@@ -112,9 +79,38 @@ export default function Conversation() {
           {sortedConversations && (
             <ConversationListView
               title="Recent"
-              conversations={sortedConversations}
+              use={{ conversations: sortedConversations }}
               selectedConversation={selectedConversationId}
-              actionPanel={getActionPanel}
+              actionPanel={(conversation: IConversation) => (
+                <ActionPanel>
+                  <Action
+                    title="Conrinue Ask"
+                    icon={Icon.ArrowRight}
+                    onAction={() => push(<Talk conversation={conversation} />)}
+                  />
+                  <ActionPanel.Section title="Delete">
+                    <Action
+                      style={Action.Style.Destructive}
+                      icon={Icon.RotateAntiClockwise}
+                      title="Remove"
+                      onAction={async () => {
+                        await confirmAlert({
+                          title: "Are you sure you want to remove this conversation?",
+                          message: "This action cannot be undone",
+                          icon: Icon.RotateAntiClockwise,
+                          primaryAction: {
+                            title: "Remove",
+                            style: Alert.ActionStyle.Destructive,
+                            onAction: () => {
+                              hookConversation.remove(conversation);
+                            },
+                          },
+                        });
+                      }}
+                    />
+                  </ActionPanel.Section>
+                </ActionPanel>
+              )}
             />
           )}
         </>

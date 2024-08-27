@@ -1,12 +1,15 @@
 import { LocalStorage, showToast, Toast } from "@raycast/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import fetch from "node-fetch";
-import { SnippetDefault, SnippetHookType } from "../type/snippet";
-import { ClearPromptSystem, ConfigurationTypeCommunicationDefault, GetApiEndpointData } from "../type/config";
-import { ITalkSnippet, SnippetDefaultTemperature } from "../ai/type";
+import { ISnippet, SnippetDefaultTemperature } from "../data/snippet";
+import { HookSnippet } from "./type";
+import { DefaultSnippet } from "./default/snippet";
+import { ConfigApiEndpointData } from "../helper/config";
+import { ClearPromptSystem } from "../common/clear";
+import { ConfigurationTypeCommunicationDefault } from "../helper/communication";
 
-export function useSnippet(): SnippetHookType {
-  const [data, setData] = useState<ITalkSnippet[]>([]);
+export function useSnippet(): HookSnippet {
+  const [data, setData] = useState<ISnippet[]>([]);
   const [isLoading, setLoading] = useState<boolean>(true);
 
   const localStorageName = "snippets";
@@ -17,10 +20,10 @@ export function useSnippet(): SnippetHookType {
       if (stored) {
         setData((previous) => [...previous, ...JSON.parse(stored)]);
       } else {
-        if (GetApiEndpointData() !== undefined && GetApiEndpointData().snippet !== undefined) {
+        if (ConfigApiEndpointData() !== undefined && ConfigApiEndpointData().snippet !== undefined) {
           await apiLoad(setData, data);
         } else {
-          setData(SnippetDefault);
+          setData(DefaultSnippet);
         }
       }
 
@@ -33,8 +36,8 @@ export function useSnippet(): SnippetHookType {
   }, [data]);
 
   const reload = useCallback(async () => {
-    if (GetApiEndpointData() === undefined || GetApiEndpointData().snippet === undefined) {
-      setData(SnippetDefault);
+    if (ConfigApiEndpointData() === undefined || ConfigApiEndpointData().snippet === undefined) {
+      setData(DefaultSnippet);
       return;
     }
     await apiLoad(setData, data);
@@ -46,9 +49,9 @@ export function useSnippet(): SnippetHookType {
   }, [setData, data]);
 
   const add = useCallback(
-    async (item: ITalkSnippet) => {
+    async (item: ISnippet) => {
       item.isLocal = true;
-      const newData: ITalkSnippet = { ...item };
+      const newData: ISnippet = { ...item };
       setData([...data, newData]);
 
       await showToast({
@@ -60,9 +63,9 @@ export function useSnippet(): SnippetHookType {
   );
 
   const update = useCallback(
-    async (item: ITalkSnippet) => {
+    async (item: ISnippet) => {
       setData((prev) => {
-        return prev.map((v: ITalkSnippet) => {
+        return prev.map((v: ISnippet) => {
           if (v.snippetId === item.snippetId) {
             return item;
           }
@@ -80,7 +83,7 @@ export function useSnippet(): SnippetHookType {
   );
 
   const remove = useCallback(
-    async (item: ITalkSnippet) => {
+    async (item: ISnippet) => {
       if (item.isLocal !== true) {
         await showToast({
           title: "Removing your Snippet imposible, Snippet is not local",
@@ -90,7 +93,7 @@ export function useSnippet(): SnippetHookType {
         return;
       }
 
-      const newData: ITalkSnippet[] = data.filter((o) => o.snippetId !== item.snippetId);
+      const newData: ISnippet[] = data.filter((o) => o.snippetId !== item.snippetId);
       setData(newData);
 
       await showToast({
@@ -115,17 +118,17 @@ export function useSnippet(): SnippetHookType {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function apiLoad(setData: any, oldData: ITalkSnippet[]) {
-  if (GetApiEndpointData().snippet === "" || GetApiEndpointData().snippet === undefined) {
-    return setData(SnippetDefault);
+async function apiLoad(setData: any, oldData: ISnippet[]) {
+  if (ConfigApiEndpointData().snippet === "" || ConfigApiEndpointData().snippet === undefined) {
+    return setData(DefaultSnippet);
   }
-  await fetch(GetApiEndpointData().snippet)
+  await fetch(ConfigApiEndpointData().snippet)
     .then(async (response) => response.json())
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .then(async (res: any) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const newRes: ITalkSnippet[] = res.map((item: any) => {
-        const existing = oldData.find((x: ITalkSnippet) => x.snippetId === item.snippetId);
+      const newRes: ISnippet[] = res.map((item: any) => {
+        const existing = oldData.find((x: ISnippet) => x.snippetId === item.snippetId);
         return {
           ...item,
           promptSystem: ClearPromptSystem(item.promptSystem),

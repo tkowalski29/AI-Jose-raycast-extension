@@ -1,26 +1,26 @@
 import { Toast } from "@raycast/api";
-import { Trace } from "../../ai/trace/trace";
-import { LangFuseTrace } from "../../ai/trace/langfuse";
-import { LunaryTrace } from "../../ai/trace/lunary";
-import { ILlm } from "../../ai/llm/type";
-import { AnthropicLLM, LLM_ANTHROPIC } from "../../ai/llm/anthropic";
-import { CohereLLM, LLM_COHERE } from "../../ai/llm/cohere";
-import { GroqLLM, LLM_GROQ } from "../../ai/llm/groq";
-import { LLM_OLLAMA, OllamaLLM } from "../../ai/llm/ollama";
-import { LLM_OPENAI, OpenaiLLM } from "../../ai/llm/openai";
-import { LLM_PERPLEXITY, PerplexityLLM } from "../../ai/llm/perplexity";
-import { LLM_BINARY, BinaryLLM } from "../../ai/llm/binary";
+import { Trace } from "../../trace/trace";
+import { LangFuseTrace } from "../../trace/langfuse";
+import { LunaryTrace } from "../../trace/lunary";
+import { AnthropicLLM, LLM_ANTHROPIC } from "../../llm/anthropic";
+import { CohereLLM, LLM_COHERE } from "../../llm/cohere";
+import { GroqLLM, LLM_GROQ } from "../../llm/groq";
+import { LLM_OLLAMA, OllamaLLM } from "../../llm/ollama";
+import { LLM_OPENAI, OpenaiLLM } from "../../llm/openai";
+import { LLM_PERPLEXITY, PerplexityLLM } from "../../llm/perplexity";
+import { LLM_BINARY, BinaryLLM } from "../../llm/binary";
+import { initData, ITalk, newTalkDataResult } from "../../data/talk";
+import { InterfaceLlm } from "../../data/llm";
 import {
-  GetAnthropicApi,
-  GetCohereApi,
-  GetGroqApi,
-  GetLangfuseApi,
-  GetLunaryApi,
-  GetOllamaApi,
-  GetOpenaiApi,
-  GetPerplexityApi,
-} from "../../type/config";
-import { initData, ITalk, newTalkDataResult } from "../../ai/type";
+  ConfigAnthropic,
+  ConfigCohere,
+  ConfigGroq,
+  ConfigLangfuse,
+  ConfigLunary,
+  ConfigOllama,
+  ConfigOpenai,
+  ConfigPerplexity,
+} from "../../helper/config";
 
 export async function RunLocal(
   chatData: ITalk,
@@ -32,25 +32,25 @@ export async function RunLocal(
 
   let langFuseTrace = undefined;
   let lunaryTrace = undefined;
-  if (GetLangfuseApi().enable) {
-    langFuseTrace = new LangFuseTrace(GetLangfuseApi().secret, GetLangfuseApi().public, GetLangfuseApi().url);
+  if (ConfigLangfuse().enable) {
+    langFuseTrace = new LangFuseTrace(ConfigLangfuse().secret, ConfigLangfuse().public, ConfigLangfuse().url);
   }
-  if (GetLunaryApi().enable) {
-    lunaryTrace = new LunaryTrace(GetLunaryApi().key);
+  if (ConfigLunary().enable) {
+    lunaryTrace = new LunaryTrace(ConfigLunary().key);
   }
 
   // eslint-disable-next-line no-useless-catch
   try {
     const trace = new Trace();
     trace.init(langFuseTrace, lunaryTrace);
-    trace.start(chatData, [`llm:${chatData.llm.llm}`, `stream:${chatData.llm.stream}`]);
-    let llm: ILlm | undefined = undefined;
+    trace.start(chatData, [`llm:${chatData.llm.object.company}`, `stream:${chatData.llm.stream}`]);
+    let llm: InterfaceLlm | undefined = undefined;
 
     trace.llmStart(chatData);
-    switch (chatData.llm.llm) {
+    switch (chatData.llm.object.company) {
       case LLM_ANTHROPIC:
         llm = new AnthropicLLM(
-          chatData.llm.object?.useLocalOrEnv === "local" ? chatData.llm.object?.apiKeyOrUrl : GetAnthropicApi().key
+          chatData.llm.object?.useLocalOrEnv === "local" ? chatData.llm.object?.apiKeyOrUrl : ConfigAnthropic().apiKey
         );
         break;
       case LLM_BINARY:
@@ -60,34 +60,34 @@ export async function RunLocal(
         break;
       case LLM_COHERE:
         llm = new CohereLLM(
-          chatData.llm.object?.useLocalOrEnv === "local" ? chatData.llm.object?.apiKeyOrUrl : GetCohereApi().key
+          chatData.llm.object?.useLocalOrEnv === "local" ? chatData.llm.object?.apiKeyOrUrl : ConfigCohere().apiKey
         );
         break;
       case LLM_GROQ:
         llm = new GroqLLM(
-          chatData.llm.object?.useLocalOrEnv === "local" ? chatData.llm.object?.apiKeyOrUrl : GetGroqApi().key
+          chatData.llm.object?.useLocalOrEnv === "local" ? chatData.llm.object?.apiKeyOrUrl : ConfigGroq().apiKey
         );
         break;
       case LLM_OLLAMA:
         chatData.llm.stream = false;
         llm = new OllamaLLM(
-          chatData.llm.object?.useLocalOrEnv === "local" ? chatData.llm.object?.apiKeyOrUrl : GetOllamaApi().url
+          chatData.llm.object?.useLocalOrEnv === "local" ? chatData.llm.object?.apiKeyOrUrl : ConfigOllama().url
         );
         break;
       case LLM_OPENAI:
         llm = new OpenaiLLM(
-          chatData.llm.object?.useLocalOrEnv === "local" ? chatData.llm.object?.apiKeyOrUrl : GetOpenaiApi().key
+          chatData.llm.object?.useLocalOrEnv === "local" ? chatData.llm.object?.apiKeyOrUrl : ConfigOpenai().apiKey
         );
         break;
       case LLM_PERPLEXITY:
         llm = new PerplexityLLM(
-          chatData.llm.object?.useLocalOrEnv === "local" ? chatData.llm.object?.apiKeyOrUrl : GetPerplexityApi().key
+          chatData.llm.object?.useLocalOrEnv === "local" ? chatData.llm.object?.apiKeyOrUrl : ConfigPerplexity().apiKey
         );
         break;
     }
 
     if (llm === undefined) {
-      throw new Error("Unknown llm: " + chatData.llm.llm);
+      throw new Error("Unknown llm: " + chatData.llm.object.company);
       return;
     }
 

@@ -1,13 +1,14 @@
 import { LocalStorage, showToast, Toast } from "@raycast/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import fetch from "node-fetch";
-import { LlmDefault, LlmHookType } from "../type/llm";
-import { GetApiEndpointData } from "../type/config";
-import { ITalkLlm } from "../ai/type";
+import { ILlm } from "../data/llm";
 import { RemoveDuplicatesByField } from "../common/list";
+import { HookLlm } from "./type";
+import { DefaultLlm } from "./default/llm";
+import { ConfigApiEndpointData } from "../helper/config";
 
-export function useLlm(): LlmHookType {
-  const [data, setData] = useState<ITalkLlm[]>([]);
+export function useLlm(): HookLlm {
+  const [data, setData] = useState<ILlm[]>([]);
   const [isLoading, setLoading] = useState<boolean>(true);
 
   const localStorageName = "llms";
@@ -18,10 +19,10 @@ export function useLlm(): LlmHookType {
       if (stored) {
         setData((previous) => RemoveDuplicatesByField([...previous, ...JSON.parse(stored)], "key"));
       } else {
-        if (GetApiEndpointData() !== undefined && GetApiEndpointData().llm !== undefined) {
+        if (ConfigApiEndpointData() !== undefined && ConfigApiEndpointData().llm !== undefined) {
           await apiLoad(setData);
         } else {
-          setData(LlmDefault);
+          setData(DefaultLlm);
         }
       }
 
@@ -36,8 +37,8 @@ export function useLlm(): LlmHookType {
   }, [data, isLoading]);
 
   const reload = useCallback(async () => {
-    if (GetApiEndpointData() === undefined || GetApiEndpointData().llm === undefined) {
-      setData(LlmDefault);
+    if (ConfigApiEndpointData() === undefined || ConfigApiEndpointData().llm === undefined) {
+      setData(DefaultLlm);
       return;
     }
     await apiLoad(setData);
@@ -49,9 +50,9 @@ export function useLlm(): LlmHookType {
   }, [setData, data]);
 
   const add = useCallback(
-    async (item: ITalkLlm) => {
+    async (item: ILlm) => {
       item.isLocal = true;
-      const newData: ITalkLlm = { ...item };
+      const newData: ILlm = { ...item };
       setData([...data, newData]);
 
       await showToast({
@@ -63,9 +64,9 @@ export function useLlm(): LlmHookType {
   );
 
   const update = useCallback(
-    async (item: ITalkLlm) => {
+    async (item: ILlm) => {
       setData((prev) => {
-        return prev.map((v: ITalkLlm) => {
+        return prev.map((v: ILlm) => {
           if (v.key === item.key) {
             return item;
           }
@@ -83,7 +84,7 @@ export function useLlm(): LlmHookType {
   );
 
   const remove = useCallback(
-    async (item: ITalkLlm) => {
+    async (item: ILlm) => {
       if (item.isLocal !== true) {
         await showToast({
           title: "Removing your Llm imposible, Llm is not local",
@@ -93,7 +94,7 @@ export function useLlm(): LlmHookType {
         return;
       }
 
-      const newData: ITalkLlm[] = data.filter((o) => o.key !== item.key);
+      const newData: ILlm[] = data.filter((o) => o.key !== item.key);
       setData(newData);
 
       await showToast({
@@ -119,15 +120,15 @@ export function useLlm(): LlmHookType {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function apiLoad(setData: any) {
-  if (GetApiEndpointData().llm === "" || GetApiEndpointData().llm === undefined) {
-    return setData(LlmDefault);
+  if (ConfigApiEndpointData().llm === "" || ConfigApiEndpointData().llm === undefined) {
+    return setData(DefaultLlm);
   }
-  await fetch(GetApiEndpointData().llm)
+  await fetch(ConfigApiEndpointData().llm)
     .then(async (response) => response.json())
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .then(async (res: any) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const newRes: ITalkLlm[] = res.map((item: any) => {
+      const newRes: ILlm[] = res.map((item: any) => {
         return {
           ...item,
           isLocal: false,

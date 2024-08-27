@@ -1,21 +1,22 @@
 import { Action, ActionPanel, Form, Icon, useNavigation } from "@raycast/api";
 import { useForm, FormValidation } from "@raycast/utils";
 import { v4 as uuidv4 } from "uuid";
-import { AssistantHookType } from "../../type/assistant";
-import { ConfigurationTypeCommunication, ConfigurationTypeCommunicationDefault } from "../../type/config";
-import { AssistantDefaultTemperature, ITalkAssistant, ITalkLlm, ITalkSnippet } from "../../ai/type";
+import { AssistantDefaultTemperature, IAssistant } from "../../data/assistant";
+import { ISnippet } from "../../data/snippet";
+import { ILlm } from "../../data/llm";
+import { HookAssistant } from "../../hook/type";
+import { ConfigurationTypeCommunication, ConfigurationTypeCommunicationDefault } from "../../helper/communication";
 
 export const AssistantFormLocal = (props: {
-  assistant?: ITalkAssistant;
-  use: { assistants: AssistantHookType; snippets: ITalkSnippet[]; llms: ITalkLlm[] };
-  name?: string;
+  assistant?: IAssistant;
+  use: { hookAssistant: HookAssistant; snippets: ISnippet[]; llms: ILlm[] };
 }) => {
   const { use, assistant } = props;
   const { pop } = useNavigation();
 
-  const { handleSubmit, itemProps } = useForm<ITalkAssistant>({
+  const { handleSubmit, itemProps } = useForm<IAssistant>({
     onSubmit: async (assistant) => {
-      const updatedItem: ITalkAssistant = { ...assistant };
+      const updatedItem: IAssistant = { ...assistant };
 
       if (props.assistant?.isLocal != true && props.assistant !== undefined) {
         updatedItem.title = props.assistant.title;
@@ -27,9 +28,9 @@ export const AssistantFormLocal = (props: {
       }
 
       if (props.assistant) {
-        use.assistants.update({ ...updatedItem, assistantId: props.assistant.assistantId });
+        use.hookAssistant.update({ ...updatedItem, assistantId: props.assistant.assistantId });
       } else {
-        use.assistants.add({ ...updatedItem, assistantId: uuidv4() });
+        use.hookAssistant.add({ ...updatedItem, assistantId: uuidv4() });
       }
       pop();
     },

@@ -1,29 +1,26 @@
 import { List } from "@raycast/api";
-import { ConfigurationTypeCommunication } from "../../type/config";
-import { ITalkAssistant, ITalkLlm, ITalkSnippet } from "../../ai/type";
+import { IAssistant } from "../../data/assistant";
+import { ISnippet } from "../../data/snippet";
+import { ILlm } from "../../data/llm";
+import { ConfigurationTypeCommunication } from "../../helper/communication";
 
 export const AssistantListView = ({
   title,
-  assistants,
-  snippets,
-  llms,
+  use,
   selectedAssistant,
   actionPanel,
 }: {
   title: string;
-  assistants: ITalkAssistant[];
-  snippets: ITalkSnippet[];
-  llms: ITalkLlm[];
+  use: { assistants: IAssistant[]; snippets: ISnippet[]; llms: ILlm[] };
   selectedAssistant: string | null;
-  actionPanel: (assistant: ITalkAssistant) => JSX.Element;
+  actionPanel: (assistant: IAssistant) => JSX.Element;
 }) => (
-  <List.Section title={title} subtitle={assistants.length.toLocaleString()}>
-    {assistants.map((assistant: ITalkAssistant) => (
+  <List.Section title={title} subtitle={use.assistants.length.toLocaleString()}>
+    {use.assistants.map((assistant: IAssistant) => (
       <AssistantListItem
         key={assistant.assistantId}
         assistant={assistant}
-        snippets={snippets}
-        llms={llms}
+        use={{ snippets: use.snippets, llms: use.llms }}
         selectedAssistant={selectedAssistant}
         actionPanel={actionPanel}
       />
@@ -33,37 +30,34 @@ export const AssistantListView = ({
 
 const AssistantListItem = ({
   assistant,
-  snippets,
-  llms,
+  use,
   selectedAssistant,
   actionPanel,
 }: {
-  assistant: ITalkAssistant;
-  snippets: ITalkSnippet[];
-  llms: ITalkLlm[];
+  assistant: IAssistant;
+  use: { snippets: ISnippet[]; llms: ILlm[] };
   selectedAssistant: string | null;
-  actionPanel: (assistant: ITalkAssistant) => JSX.Element;
+  actionPanel: (assistant: IAssistant) => JSX.Element;
 }) => {
   return (
     <List.Item
       id={assistant.assistantId}
       key={assistant.assistantId}
       title={assistant.title}
-      subtitle={llms.find((x: { key: string; title: string }) => x.key === assistant.model)?.title}
+      subtitle={use.llms.find((x: { key: string; title: string }) => x.key === assistant.model)?.title}
       icon={assistant.avatar ? { source: assistant.avatar } : { source: assistant.emoji }}
-      detail={<ModelDetailView assistant={assistant} snippets={snippets} llms={llms} />}
+      detail={<ModelDetailView assistant={assistant} use={use} />}
       actions={selectedAssistant === assistant.assistantId ? actionPanel(assistant) : undefined}
     />
   );
 };
 
 const ModelDetailView = (props: {
-  assistant: ITalkAssistant;
-  snippets: ITalkSnippet[];
-  llms: ITalkLlm[];
+  assistant: IAssistant;
+  use: { snippets: ISnippet[]; llms: ILlm[] };
   markdown?: string | null | undefined;
 }) => {
-  const { assistant, snippets, llms, markdown } = props;
+  const { assistant, use, markdown } = props;
 
   return (
     <List.Item.Detail
@@ -77,7 +71,7 @@ const ModelDetailView = (props: {
           <List.Item.Detail.Metadata.Separator />
           <List.Item.Detail.Metadata.Label
             title="Model"
-            text={llms.find((x: { key: string; title: string }) => x.key === assistant.model)?.title}
+            text={use.llms.find((x: { key: string; title: string }) => x.key === assistant.model)?.title}
           />
           <List.Item.Detail.Metadata.Label title="Temperature Model" text={assistant.modelTemperature} />
           {/* <List.Item.Detail.Metadata.Label title="Webhook" text={(assistant.webhookUrl ? assistant.webhookUrl : "")} /> */}
@@ -99,8 +93,8 @@ const ModelDetailView = (props: {
             <List.Item.Detail.Metadata.Label
               key={snippetId}
               title=""
-              text={snippets.find((x: ITalkSnippet) => x.snippetId === snippetId)?.title}
-              icon={snippets.find((x: ITalkSnippet) => x.snippetId === snippetId)?.emoji}
+              text={use.snippets.find((x: ISnippet) => x.snippetId === snippetId)?.title}
+              icon={use.snippets.find((x: ISnippet) => x.snippetId === snippetId)?.emoji}
             />
           ))}
           {/* <List.Item.Detail.Metadata.Label title="__" text={assistant.modelApiKeyOrUrl} /> */}

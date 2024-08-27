@@ -1,9 +1,10 @@
 import { LocalStorage, showToast, Toast } from "@raycast/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ConversationsHookType, ConversationType } from "../type/conversation";
+import { IConversation } from "../data/conversation";
+import { HookConversation } from "./type";
 
-export function useConversations(): ConversationsHookType {
-  const [data, setData] = useState<ConversationType[]>([]);
+export function useConversations(): HookConversation {
+  const [data, setData] = useState<IConversation[]>([]);
   const [isLoading, setLoading] = useState<boolean>(true);
 
   const localStorageName = "conversations";
@@ -22,19 +23,19 @@ export function useConversations(): ConversationsHookType {
   useEffect(() => {
     LocalStorage.setItem(
       localStorageName,
-      JSON.stringify(data.filter((conversation: ConversationType) => conversation.chats.length > 0))
+      JSON.stringify(data.filter((conversation: IConversation) => conversation.messages.length > 0))
     );
   }, [data]);
 
   const add = useCallback(
-    async (conversation: ConversationType) => {
+    async (conversation: IConversation) => {
       setData([...data, conversation]);
     },
     [setData, data]
   );
 
   const update = useCallback(
-    async (conversation: ConversationType) => {
+    async (conversation: IConversation) => {
       setData((prev) => {
         return prev.map((x) => {
           if (x.conversationId === conversation.conversationId) {
@@ -48,9 +49,9 @@ export function useConversations(): ConversationsHookType {
   );
 
   const remove = useCallback(
-    async (conversation: ConversationType) => {
-      const newConversations: ConversationType[] = data.filter(
-        (item: ConversationType) => item.conversationId !== conversation.conversationId
+    async (conversation: IConversation) => {
+      const newConversations: IConversation[] = data.filter(
+        (item: IConversation) => item.conversationId !== conversation.conversationId
       );
       setData(newConversations);
 

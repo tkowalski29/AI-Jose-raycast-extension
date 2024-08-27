@@ -1,27 +1,26 @@
 import { List } from "@raycast/api";
-import { ConfigurationTypeCommunication } from "../../type/config";
-import { ITalkLlm, ITalkSnippet } from "../../ai/type";
+import { ISnippet } from "../../data/snippet";
+import { ILlm } from "../../data/llm";
+import { ConfigurationTypeCommunication } from "../../helper/communication";
 
 export const SnippetListView = ({
-  snippets,
-  llms,
+  use,
   selectedSnippet,
   actionPanel,
 }: {
-  snippets: ITalkSnippet[];
-  llms: ITalkLlm[];
+  use: { snippets: ISnippet[]; llms: ILlm[] };
   selectedSnippet: string | null;
-  actionPanel: (snippet: ITalkSnippet) => JSX.Element;
+  actionPanel: (snippet: ISnippet) => JSX.Element;
 }) => {
   return (
     <>
-      {Object.entries(SnippetGroupByCategory(snippets) as Record<string, ITalkSnippet[]>).map(([name, list]) => (
+      {Object.entries(SnippetGroupByCategory(use.snippets) as Record<string, ISnippet[]>).map(([name, list]) => (
         <List.Section key={name} title={name} subtitle={list.length.toLocaleString()}>
-          {list.map((snippet: ITalkSnippet) => (
+          {list.map((snippet: ISnippet) => (
             <SnippetListItem
               key={snippet.snippetId}
               snippet={snippet}
-              llms={llms}
+              use={{ llms: use.llms }}
               selectedsnippet={selectedSnippet}
               actionPanel={actionPanel}
             />
@@ -32,9 +31,9 @@ export const SnippetListView = ({
   );
 };
 
-export function SnippetGroupByCategory(array: ITalkSnippet[]) {
+export function SnippetGroupByCategory(array: ISnippet[]) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return array.reduce((acc: any, obj: ITalkSnippet) => {
+  return array.reduce((acc: any, obj: ISnippet) => {
     const key = obj.category;
     if (!acc[key]) {
       acc[key] = [];
@@ -46,30 +45,30 @@ export function SnippetGroupByCategory(array: ITalkSnippet[]) {
 
 export const SnippetListItem = ({
   snippet,
-  llms,
+  use,
   selectedsnippet,
   actionPanel,
 }: {
-  snippet: ITalkSnippet;
-  llms: ITalkLlm[];
+  snippet: ISnippet;
+  use: { llms: ILlm[] };
   selectedsnippet: string | null;
-  actionPanel: (snippet: ITalkSnippet) => JSX.Element;
+  actionPanel: (snippet: ISnippet) => JSX.Element;
 }) => {
   return (
     <List.Item
       id={snippet.snippetId}
       key={snippet.snippetId}
       title={snippet.title}
-      subtitle={llms.find((x: { key: string; title: string }) => x.key === snippet.model)?.title}
+      subtitle={use.llms.find((x: { key: string; title: string }) => x.key === snippet.model)?.title}
       icon={{ source: snippet.emoji }}
-      detail={<ModelDetailView snippet={snippet} llms={llms} />}
+      detail={<ModelDetailView snippet={snippet} use={{ llms: use.llms }} />}
       actions={selectedsnippet === snippet.snippetId ? actionPanel(snippet) : undefined}
     />
   );
 };
 
-const ModelDetailView = (props: { snippet: ITalkSnippet; llms: ITalkLlm[]; markdown?: string | null | undefined }) => {
-  const { snippet, llms, markdown } = props;
+const ModelDetailView = (props: { use: { llms: ILlm[] }; snippet: ISnippet; markdown?: string | null | undefined }) => {
+  const { snippet, use, markdown } = props;
 
   return (
     <List.Item.Detail
@@ -82,7 +81,7 @@ const ModelDetailView = (props: { snippet: ITalkSnippet; llms: ITalkLlm[]; markd
           <List.Item.Detail.Metadata.Separator />
           <List.Item.Detail.Metadata.Label
             title="Model"
-            text={llms.find((x: { key: string; title: string }) => x.key === snippet.model)?.title}
+            text={use.llms.find((x: { key: string; title: string }) => x.key === snippet.model)?.title}
           />
           <List.Item.Detail.Metadata.Label title="Temperature Model" text={snippet.modelTemperature} />
           <List.Item.Detail.Metadata.Label title="Webhook" text={snippet.webhookUrl ? snippet.webhookUrl : ""} />

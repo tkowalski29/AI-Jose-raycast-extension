@@ -1,16 +1,13 @@
 import { Action, ActionPanel, Form, Icon, useNavigation } from "@raycast/api";
 import { useForm, FormValidation } from "@raycast/utils";
 import { v4 as uuidv4 } from "uuid";
-import { AssistantHookType } from "../../type/assistant";
-import {
-  ClearImportModel,
-  ClearImportModelTemperature,
-  ConfigurationModelDefault,
-  ConfigurationTypeCommunicationDefault,
-} from "../../type/config";
-import { AssistantDefaultTemperature, ITalkAssistant, ITalkLlm } from "../../ai/type";
+import { ILlm } from "../../data/llm";
+import { AssistantDefaultTemperature, IAssistant } from "../../data/assistant";
+import { HookAssistant } from "../../hook/type";
+import { ClearImportModel, ClearImportModelTemperature } from "../../common/llm";
+import { ConfigurationTypeCommunicationDefault } from "../../helper/communication";
 
-export const AssistantImportForm = (props: { use: { assistants: AssistantHookType; llms: ITalkLlm[] } }) => {
+export const AssistantImportForm = (props: { use: { hookAssistant: HookAssistant; llms: ILlm[] } }) => {
   const { use } = props;
   const { pop } = useNavigation();
 
@@ -20,10 +17,10 @@ export const AssistantImportForm = (props: { use: { assistants: AssistantHookTyp
       JSON.parse(data.json).map((item: any) => {
         let iModel = ClearImportModel(item.model);
         if (!use.llms.some((model) => model.key === iModel)) {
-          iModel = ConfigurationModelDefault;
+          iModel = "openai__gpt-4o-mini";
         }
 
-        const newAssistant: ITalkAssistant = {
+        const newAssistant: IAssistant = {
           assistantId: uuidv4(),
           title: item.name,
           description: "",
@@ -37,9 +34,10 @@ export const AssistantImportForm = (props: { use: { assistants: AssistantHookTyp
           snippet: undefined,
           isLocal: false,
           typeCommunication: ConfigurationTypeCommunicationDefault,
+          llm: undefined,
         };
 
-        use.assistants.add({ ...newAssistant });
+        use.hookAssistant.add({ ...newAssistant });
       });
       pop();
     },

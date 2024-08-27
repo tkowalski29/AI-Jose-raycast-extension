@@ -1,21 +1,18 @@
 import { Action, ActionPanel, Form, Icon, useNavigation } from "@raycast/api";
 import { useForm, FormValidation } from "@raycast/utils";
 import { v4 as uuidv4 } from "uuid";
-import { SnippetHookType } from "../../type/snippet";
-import { ConfigurationTypeCommunication, ConfigurationTypeCommunicationDefault } from "../../type/config";
-import { ITalkLlm, ITalkSnippet, SnippetDefaultTemperature } from "../../ai/type";
+import { ISnippet, SnippetDefaultTemperature } from "../../data/snippet";
+import { HookSnippet } from "../../hook/type";
+import { ILlm } from "../../data/llm";
+import { ConfigurationTypeCommunication, ConfigurationTypeCommunicationDefault } from "../../helper/communication";
 
-export const SnippetFormApi = (props: {
-  snippet?: ITalkSnippet;
-  use: { snippets: SnippetHookType; llms: ITalkLlm[] };
-  name?: string;
-}) => {
+export const SnippetFormApi = (props: { snippet?: ISnippet; use: { snippets: HookSnippet; llms: ILlm[] } }) => {
   const { use, snippet } = props;
   const { pop } = useNavigation();
 
-  const { handleSubmit, itemProps } = useForm<ITalkSnippet>({
+  const { handleSubmit, itemProps } = useForm<ISnippet>({
     onSubmit: async (snippet) => {
-      const updatedItem: ITalkSnippet = { ...snippet };
+      const updatedItem: ISnippet = { ...snippet };
 
       if (props.snippet?.isLocal != true && props.snippet !== undefined) {
         updatedItem.title = props.snippet.title;

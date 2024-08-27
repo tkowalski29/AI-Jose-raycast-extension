@@ -1,20 +1,20 @@
 import { Action, ActionPanel, Form, Icon, useNavigation } from "@raycast/api";
 import { useForm, FormValidation } from "@raycast/utils";
-import { LlmHookType } from "../../type/llm";
-import { ITalkLlm } from "../../ai/type";
+import { ILlm } from "../../data/llm";
+import { HookLlm } from "../../hook/type";
 
-export const LlmFormLocal = (props: { llm?: ITalkLlm; use: { llms: LlmHookType }; name?: string }) => {
+export const LlmFormLocal = (props: { llm?: ILlm; use: { llms: HookLlm } }) => {
   const { use, llm } = props;
   const { pop } = useNavigation();
 
-  const { handleSubmit, itemProps } = useForm<ITalkLlm>({
+  const { handleSubmit, itemProps } = useForm<ILlm>({
     onSubmit: async (llm) => {
-      const updatedItem: ITalkLlm = { ...llm };
+      const updatedItem: ILlm = { ...llm };
       updatedItem.key = `${updatedItem.company}__${updatedItem.model}`;
 
       if (props.llm?.isLocal != true && props.llm !== undefined) {
         updatedItem.key = props.llm.key;
-        updatedItem.url = props.llm.url;
+        // updatedItem.url = props.llm.url;
       }
 
       if (props.llm) {
@@ -34,7 +34,7 @@ export const LlmFormLocal = (props: { llm?: ITalkLlm; use: { llms: LlmHookType }
       model: llm?.model ?? "",
       apiKeyOrUrl: llm?.apiKeyOrUrl ?? "",
       useLocalOrEnv: llm?.useLocalOrEnv ?? "env",
-      url: llm?.url ?? "",
+      // url: llm?.url ?? "",
     },
   });
 
@@ -62,7 +62,7 @@ export const LlmFormLocal = (props: { llm?: ITalkLlm; use: { llms: LlmHookType }
         <Form.Dropdown.Item value="local" key="local" title="Local configuration llm" />
         <Form.Dropdown.Item value="env" key="env" title="Enviroment extension" />
       </Form.Dropdown>
-      <Form.TextArea title="Url" placeholder="Url to download your llm" {...itemProps.url} />
+      {/* <Form.TextArea title="Url" placeholder="Url to download your llm" {...itemProps.url} /> */}
     </Form>
   );
 };

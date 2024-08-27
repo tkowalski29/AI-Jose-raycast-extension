@@ -1,11 +1,12 @@
 import { Detail, ActionPanel, Action, Icon, Form, useNavigation } from "@raycast/api";
 import { useEffect, useState } from "react";
-import { ITalkAssistant, ITalkLlm } from "./ai/type";
 import { useLlm } from "./hook/useLlm";
 import { useAssistant } from "./hook/useAssistant";
-import { ConfigurationTypeCommunicationLocal } from "./type/config";
 import { v4 as uuidv4 } from "uuid";
 import { useOnboarding } from "./hook/useOnboarding";
+import { ILlm } from "./data/llm";
+import { IAssistant } from "./data/assistant";
+import { ConfigurationTypeCommunicationLocal } from "./helper/communication";
 
 const STEPS = {
   WELCOME: 1,
@@ -77,8 +78,8 @@ const llms: Record<
 export default function Onboarding() {
   const [currentStep, setCurrentStep] = useState<number | null>(null);
   const { pop } = useNavigation();
-  const collectionsLlm = useLlm();
-  const collectionsAssistant = useAssistant();
+  const hookLlm = useLlm();
+  const hookAssistant = useAssistant();
   const hookOnboarding = useOnboarding();
   const [llm, setLLM] = useState("");
   const [apiKeyOrUrl, setApiKeyOrUrl] = useState("");
@@ -125,14 +126,15 @@ export default function Onboarding() {
     };
 
     const handleSaveAndNext = async () => {
-      const llmData: ITalkLlm = {
+      const llmData: ILlm = {
         key: llms[llm].model,
         title: llms[llm].modelTitle,
         company: llms[llm].key,
         model: llms[llm].model,
         apiKeyOrUrl: apiKeyOrUrl,
         useLocalOrEnv: "local",
-        url: undefined,
+        fileDownloadUrl: undefined,
+        fileDownloadName: undefined,
         trainingDataTo: undefined,
         tokens: {
           contextWindow: undefined,
@@ -142,7 +144,7 @@ export default function Onboarding() {
       };
 
       if (llms && apiKeyOrUrl) {
-        collectionsLlm.add(llmData);
+        hookLlm.add(llmData);
 
         saveStep(STEPS.CHOICE_ASSISTANT);
       }
@@ -164,7 +166,7 @@ export default function Onboarding() {
           onChange={handleLLMChange}
         >
           {Object.entries(llms).map(([key, value]) => {
-            const exist = collectionsLlm.data.find((item: ITalkLlm) => item.key === value.model);
+            const exist = hookLlm.data.find((item: ILlm) => item.key === value.model);
             if (exist === undefined) {
               return <Form.Dropdown.Item value={key} key={key} title={value.name} />;
             }
@@ -194,7 +196,7 @@ export default function Onboarding() {
 
   if (currentStep === STEPS.CHOICE_ASSISTANT) {
     const handleFinish = () => {
-      const assistantData: ITalkAssistant = {
+      const assistantData: IAssistant = {
         typeCommunication: ConfigurationTypeCommunicationLocal,
         assistantId: uuidv4(),
         title: assistantTitle,
@@ -208,10 +210,11 @@ export default function Onboarding() {
         additionalData: undefined,
         snippet: undefined,
         isLocal: true,
+        llm: llm,
       };
 
       if (assistantTitle && assistantSystemPrompt) {
-        collectionsAssistant.add(assistantData);
+        hookAssistant.add(assistantData);
 
         saveStep(STEPS.FINISHED);
       }

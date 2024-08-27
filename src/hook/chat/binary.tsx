@@ -1,6 +1,6 @@
 import { Toast } from "@raycast/api";
-import { GetApiBinnary } from "../../type/config";
-import { ITalk, ITalkQuestionFile } from "../../ai/type";
+import { ITalk, ITalkQuestionFile } from "../../data/talk";
+import { ConfigBinnary } from "../../helper/config";
 
 export async function RunBinnary(
   chat: ITalk,
@@ -25,7 +25,7 @@ export async function RunBinnary(
 
   // eslint-disable-next-line no-useless-catch
   try {
-    const { stdout, stderr } = await exec(`chmod +x ${GetApiBinnary().path}; .${GetApiBinnary().path} '${b64}'`);
+    const { stdout, stderr } = await exec(`chmod +x ${ConfigBinnary().path}; .${ConfigBinnary().path} '${b64}'`);
 
     if (stderr !== "") {
       throw stderr;

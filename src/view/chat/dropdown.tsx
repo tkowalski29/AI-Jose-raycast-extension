@@ -1,19 +1,24 @@
 import { List } from "@raycast/api";
-import { ChangeDropdownPropType } from "../../type/chat";
 import { SnippetGroupByCategory } from "../snippet/list";
-import { ITalkAssistant, ITalkSnippet } from "../../ai/type";
+import { ISnippet } from "../../data/snippet";
+import { IAssistant } from "../../data/assistant";
 
-export const ChatDropdown = (props: ChangeDropdownPropType) => {
-  const { assistants, snippets, selectedAssistant, onAssistantChange, onSnippetChange } = props;
-  const filtredSnippets = snippets.filter((snippet: ITalkSnippet) =>
+export const ChatDropdown = (props: {
+  use: { assistants: IAssistant[]; snippets: ISnippet[] };
+  selectedAssistant: IAssistant | undefined;
+  onAssistantChange: React.Dispatch<React.SetStateAction<IAssistant>>;
+  onSnippetChange: React.Dispatch<React.SetStateAction<ISnippet | undefined>>;
+}) => {
+  const { use, selectedAssistant, onAssistantChange, onSnippetChange } = props;
+  const filtredSnippets = use.snippets.filter((snippet: ISnippet) =>
     (selectedAssistant !== undefined && selectedAssistant.snippet ? selectedAssistant.snippet.join(", ") : "").includes(
       snippet.snippetId
     )
   );
-  let assistantsList = assistants;
+  let assistantsList = use.assistants;
   if (selectedAssistant !== undefined) {
     assistantsList = assistantsList.filter(
-      (assistant: ITalkAssistant) => assistant.assistantId !== selectedAssistant.assistantId
+      (assistant: IAssistant) => assistant.assistantId !== selectedAssistant.assistantId
     );
   }
 
@@ -25,31 +30,29 @@ export const ChatDropdown = (props: ChangeDropdownPropType) => {
       onChange={(value: string) => {
         const data = value.split("__");
         if (data[0] === "assistant") {
-          const item = assistants.find((assistant: ITalkAssistant) => assistant.assistantId == data[1]);
+          const item = use.assistants.find((assistant: IAssistant) => assistant.assistantId == data[1]);
           if (!item) return;
           onAssistantChange(item);
         } else if (data[0] === "snippet") {
-          const item = snippets.find((snippet: ITalkSnippet) => snippet.snippetId == data[1]);
+          const item = use.snippets.find((snippet: ISnippet) => snippet.snippetId == data[1]);
           if (!item) return;
           onSnippetChange(item);
         }
       }}
     >
       <>
-        {Object.entries(SnippetGroupByCategory(filtredSnippets) as Record<string, ITalkSnippet[]>).map(
-          ([name, list]) => (
-            <List.Dropdown.Section key={name} title={name + " - Snippets"}>
-              {list.map((snippet: ITalkSnippet) => (
-                <List.Dropdown.Item
-                  key={snippet.snippetId}
-                  title={snippet.title}
-                  value={"snippet__" + snippet.snippetId}
-                  icon={{ source: snippet.emoji }}
-                />
-              ))}
-            </List.Dropdown.Section>
-          )
-        )}
+        {Object.entries(SnippetGroupByCategory(filtredSnippets) as Record<string, ISnippet[]>).map(([name, list]) => (
+          <List.Dropdown.Section key={name} title={name + " - Snippets"}>
+            {list.map((snippet: ISnippet) => (
+              <List.Dropdown.Item
+                key={snippet.snippetId}
+                title={snippet.title}
+                value={"snippet__" + snippet.snippetId}
+                icon={{ source: snippet.emoji }}
+              />
+            ))}
+          </List.Dropdown.Section>
+        ))}
       </>
       <List.Dropdown.Section title="Change to Assistant">
         {selectedAssistant && (
@@ -60,7 +63,7 @@ export const ChatDropdown = (props: ChangeDropdownPropType) => {
             icon={selectedAssistant.avatar ? { source: selectedAssistant.avatar } : { source: selectedAssistant.emoji }}
           />
         )}
-        {assistantsList.map((assistant: ITalkAssistant) => (
+        {assistantsList.map((assistant: IAssistant) => (
           <List.Dropdown.Item
             key={assistant.assistantId}
             title={assistant.title}

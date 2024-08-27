@@ -18,10 +18,10 @@
       "mode": "view"
     },
     {
-      "name": "chat",
-      "title": "Chat",
-      "subtitle": "Chat view",
-      "description": "Chat view for starting conversation",
+      "name": "talk",
+      "title": "Talk on chat",
+      "subtitle": "Talk on chat view",
+      "description": "Talk on chat view for starting conversation",
       "mode": "view",
       "arguments": [
         {

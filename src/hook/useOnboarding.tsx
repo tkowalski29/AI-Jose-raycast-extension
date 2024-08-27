@@ -1,8 +1,8 @@
 import { LocalStorage, showToast, Toast } from "@raycast/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { OnboardingHookType } from "../type/onboarding";
+import { HookOnboarding } from "./type";
 
-export function useOnboarding(): OnboardingHookType {
+export function useOnboarding(): HookOnboarding {
   const [data, setData] = useState<boolean>(false);
   const [isLoading, setLoading] = useState<boolean>(true);
 

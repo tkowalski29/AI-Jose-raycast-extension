@@ -1,8 +1,8 @@
 import { getSelectedText, showToast, Toast } from "@raycast/api";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { QuestionHookType } from "../type/chat";
+import { HookQuestionTalk } from "./type";
 
-export function useQuestion(props: { initialQuestion: string; disableAutoLoad?: boolean }): QuestionHookType {
+export function useQuestion(props: { initialQuestion: string; disableAutoLoad?: boolean }): HookQuestionTalk {
   const { initialQuestion, disableAutoLoad } = props;
   const [data, setData] = useState<string>(initialQuestion);
   const [isLoading, setLoading] = useState<boolean>(false);

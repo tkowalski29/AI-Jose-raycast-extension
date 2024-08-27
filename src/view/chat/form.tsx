@@ -1,8 +1,13 @@
 import { Action, ActionPanel, Form, Icon, useNavigation } from "@raycast/api";
 import { useState } from "react";
-import { ChatFullFormPropsType } from "../../type/chat";
 
-export const ChatFullForm = ({ initialQuestion, onSubmit }: ChatFullFormPropsType) => {
+export const ChatFullForm = ({
+  initialQuestion,
+  onSubmit,
+}: {
+  initialQuestion: string;
+  onSubmit: (question: string, file: string[] | undefined) => void;
+}) => {
   const { pop } = useNavigation();
 
   const [question, setQuestion] = useState<string>(initialQuestion ?? "");

@@ -1,20 +1,20 @@
 import { List } from "@raycast/api";
-import { ITalkLlm } from "../../ai/type";
+import { ILlm } from "../../data/llm";
 
 export const LlmListView = ({
   llms,
   selectedLlm,
   actionPanel,
 }: {
-  llms: ITalkLlm[];
+  llms: ILlm[];
   selectedLlm: string | null;
-  actionPanel: (llm: ITalkLlm) => JSX.Element;
+  actionPanel: (llm: ILlm) => JSX.Element;
 }) => {
   return (
     <>
-      {Object.entries(LlmGroupByCompany(llms) as Record<string, ITalkLlm[]>).map(([name, list]) => (
+      {Object.entries(LlmGroupByCompany(llms) as Record<string, ILlm[]>).map(([name, list]) => (
         <List.Section key={name} title={name} subtitle={list.length.toLocaleString()}>
-          {list.map((llm: ITalkLlm) => (
+          {list.map((llm: ILlm) => (
             <LlmListItem key={llm.key} llm={llm} selectedllm={selectedLlm} actionPanel={actionPanel} />
           ))}
         </List.Section>
@@ -23,9 +23,9 @@ export const LlmListView = ({
   );
 };
 
-export function LlmGroupByCompany(array: ITalkLlm[]) {
+export function LlmGroupByCompany(array: ILlm[]) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return array.reduce((acc: any, obj: ITalkLlm) => {
+  return array.reduce((acc: any, obj: ILlm) => {
     const key = obj.company;
     if (!acc[key]) {
       acc[key] = [];
@@ -40,9 +40,9 @@ export const LlmListItem = ({
   selectedllm,
   actionPanel,
 }: {
-  llm: ITalkLlm;
+  llm: ILlm;
   selectedllm: string | null;
-  actionPanel: (llm: ITalkLlm) => JSX.Element;
+  actionPanel: (llm: ILlm) => JSX.Element;
 }) => {
   return (
     <List.Item
@@ -56,7 +56,7 @@ export const LlmListItem = ({
   );
 };
 
-const ModelDetailView = (props: { llm: ITalkLlm; markdown?: string | null | undefined }) => {
+const ModelDetailView = (props: { llm: ILlm; markdown?: string | null | undefined }) => {
   const { llm } = props;
 
   return (
@@ -66,7 +66,7 @@ const ModelDetailView = (props: { llm: ITalkLlm; markdown?: string | null | unde
           <List.Item.Detail.Metadata.Label title="Title" text={llm.title} />
           <List.Item.Detail.Metadata.Label title="Company" text={llm.company} />
           <List.Item.Detail.Metadata.Label title="Model" text={llm.model} />
-          <List.Item.Detail.Metadata.Label title="Url" text={llm.url} />
+          {/* <List.Item.Detail.Metadata.Label title="Url" text={llm.url} /> */}
           <List.Item.Detail.Metadata.Separator />
           <List.Item.Detail.Metadata.Label title="Local" text={llm.isLocal ? "YES" : "no"} />
           <List.Item.Detail.Metadata.Label title="ID" text={llm.key} />
